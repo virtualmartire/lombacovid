@@ -3,31 +3,37 @@ Poi salva tutto nelle rispettive stories e html."""
 
 import pandas as pd
 import numpy as np
-import grafichini as graph
 from datetime import date
-import dusi
 import os
 import shutil
 
-print("Caricamento...")
+import grafichini as graph
+import dusi
+import neuralvax
 
-#prima di tutto BACKUP
+#
+##
+### PREPARO GLI INPUT
+##
+#
+
+#controllo che esistano, altrimenti non se ne fa niente
+dusi.download()
+
+#faccio il backup
 shutil.rmtree('backup')
 os.system('cp -r pantarei backup')
-
-#
-##
-### LEGGO I DATI
-##
-#
-
-dusi.download()
+shutil.copy('past.csv', 'backup')
+shutil.copy('timestep.txt', 'backup')
+shutil.copy('timestep_vax.txt', 'backup')
 
 past = pd.read_csv('past.csv')
 present = pd.read_csv('present.csv')
 
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
 lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
+
+neuralvax.screenshot()
 
 #
 ##
@@ -57,6 +63,17 @@ tot_deceduti_present = lombardia_present['deceduti'].values[0]
 tot_deceduti_past = lombardia_past['deceduti'].values[0]
 deceduti_oggi = tot_deceduti_present - tot_deceduti_past
 
+#vaccinati
+vax_tot_hp = neuralvax.gino_leggi()
+print("Ciao, sono Gino. Ecco cosa ho trovato:")
+print(vax_tot_hp)
+confirmed = input("Qual è quello giusto? (0-6/n) ")
+if confirmed == "n":
+	vax_tot = int( input("Ok dimmi tu: ") )
+else:
+	vax_tot = int(vax_tot_hp[int(confirmed)])
+vax_perc = np.around(vax_tot / 10060965 * 100, 2)
+
 #
 ##
 ### ESPORTO
@@ -83,57 +100,60 @@ f = open('pantarei/deceduti_story.txt', 'a')
 f.write( "\n" + str(deceduti_oggi) )
 f.close()
 
+#story dei vaccinati
+f = open('pantarei/vaccinati_story.txt', 'a')
+f.write( "\n" + str(vax_tot) )
+f.close()
+
 """ """
 
 #grafico rapporti
-graph.curve(path = "pantarei/perc_story.txt", filename = "rapporto", color = "#ff0000", ylabel = "rapporto = pos/tam")
+graph.curve(path = "pantarei/perc_story.txt", filename = "rapporto", color = "#f33a30", ylabel = "rapporto = pos/tam")
 
 #grafico ospedalizzati
-graph.curve("pantarei/ospedalizzati_story.txt", "ospedalizzati", "#33cc33", "ospedalizzati")
+graph.curve("pantarei/ospedalizzati_story.txt", "ospedalizzati", "#f99726", "ospedalizzati")
 
 #grafico terapie
-graph.curve("pantarei/terapie_story.txt", "terapie_attuali", "#005ce6", "T.I. occupate")
+graph.curve("pantarei/terapie_story.txt", "terapie_attuali", "#44a546", "t.i. occupate")
 
 #grafico deceduti
-graph.histo("pantarei/deceduti_story.txt", "deceduti_giornalieri", "#6600cc", "deceduti")
+graph.histo("pantarei/deceduti_story.txt", "deceduti_giornalieri", "#1c8af2", "deceduti")
+
+#grafico vaccinati
+graph.vax("pantarei/vaccinati_story.txt", "tot_vaccinati", "#9023a8", "tot vaccinati")
 
 """ """
 
 #html del rapporto
 f = open('pantarei/perc.txt', 'w')
-f.write("<span id='perc'>" + str(percentuale) + "%</span>")
-f.close()
-
-#html dei nuovi positivi
-f = open('pantarei/nuovipos.txt', 'w')
-f.write("<span id='nuovipos'>" + str(nuovi_positivi) + "</span>")
-f.close()
-
-#html dei tamponi di oggi
-f = open('pantarei/tam.txt', 'w')
-f.write("<span id='tam'>" + str(tamponi_oggi) + "</span>")
+f.write( str(percentuale) + "%" )
 f.close()
 
 #html degli ospedalizzati
 f = open('pantarei/ospedalizzati.txt', 'w')
-f.write("<span id='ospedalizzati'>" + str(ospedalizzati) + "</span>")
+f.write( str(ospedalizzati) )
 f.close()
 
 #html delle terapie attuali
 f = open('pantarei/terapie_attuali.txt', 'w')
-f.write("<span id='terapie_attuali'>" + str(terapie_attuali) + "</span>")
+f.write( str(terapie_attuali) )
 f.close()
 
 #html dei deceduti oggi
 f = open('pantarei/deceduti_oggi.txt', 'w')
-f.write("<span id='deceduti_oggi'>" + str(deceduti_oggi) + "</span>")
+f.write( str(deceduti_oggi) )
+f.close()
+
+#html della percentuale di vaccinati totali
+f = open('pantarei/vax_perc.txt', 'w')
+f.write( str(vax_perc) + "%")
 f.close()
 
 """ """
 
 giorno = date.today().strftime("%d/%m/%Y")
 f = open('pantarei/data.txt', 'w')
-f.write("<span>" + str(giorno) + "</span>")
+f.write( str(giorno) )
 f.close()
 
 #
