@@ -67,7 +67,7 @@ deceduti_oggi = tot_deceduti_present - tot_deceduti_past
 vax_tot_hp = neuralvax.gino_leggi()
 print("Ciao, sono Gino. Ecco cosa ho trovato:")
 print(vax_tot_hp)
-confirmed = input("Qual è quello giusto? (0-6/n) ")
+confirmed = input("Qual è quello giusto? (0-9/n) ")
 if confirmed == "n":
 	vax_tot = int( input("Ok dimmi tu: ") )
 else:

@@ -15,7 +15,7 @@ def screenshot():
 	chrome_options.add_argument('--headless')
 	chrome_options.add_argument('--start-maximized')
 	driver = webdriver.Chrome(options=chrome_options)
-	driver.get('https://app.powerbi.com/view?r=eyJrIjoiMzg4YmI5NDQtZDM5ZC00ZTIyLTgxN2MtOTBkMWM4MTUyYTg0IiwidCI6ImFmZDBhNzVjLTg2NzEtNGNjZS05MDYxLTJjYTBkOTJlNDIyZiIsImMiOjh9')
+	driver.get('https://www.governo.it/it/cscovid19/report-vaccini/')
 	time.sleep(2)
 
 	driver.set_window_size(1500, 2600)
@@ -24,7 +24,7 @@ def screenshot():
 	driver.quit()
 
 	im = Image.open('screenshot.png')
-	im = im.crop( (300, 1400, 1900, 3000 ) )	#unità di misura diverse da set_window_size(), credo
+	im = im.crop( (300, 1400, 1900, 4000 ) )	#unità di misura diverse da set_window_size(), credo
 	im.save("screenshot.png")
 
 #
@@ -51,4 +51,4 @@ def gino_leggi():
 	words_list = [ pair[0] for pair in predictions_lists[0] ]
 	scope = words_list.index('lombardia')
 
-	return words_list[ scope-6 : scope+1 ]
+	return words_list[ scope-4 : scope+6 ]
