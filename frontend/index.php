@@ -20,9 +20,13 @@
       		var yellow = [];
       		var oranges = [];
       		
-      		if(true == true){
-      		  document.getElementById("zona").style.color = "red";
-      		  document.getElementById("zona").innerHTML = "rossa";
+      		if(current_date > 29){
+      			document.getElementById("zona").style.color = "orange";
+      			document.getElementById("zona").innerHTML = "arancione";
+      		} else {
+      		  	document.getElementById("zona").style.background = "#e6e600";
+       	 		document.getElementById("zona").style.color = "white";
+        		document.getElementById("zona").innerHTML = "gialla";
       		}
       
       		/*
@@ -149,12 +153,16 @@
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
-        <img src="pantarei/tot_vaccinati_graph.png" style="width:100%">
+        <img src="pantarei/vaccini_graph.png" style="width:100%">
       </div>
       <div class="w3-half">
-        <h5 style="margin-top:42px; margin-left:15px">Percentuale vaccinati rispetto alla popolazione:</h5>
+        <h5 style="margin-top:42px; margin-left:15px">Percentuale di persone che hanno ricevuto almeno la prima dose di vaccino:</h5>
         <div class="w3-grey" style="margin-left:15px;margin-right:15px">
-        <div class="w3-container w3-center w3-padding w3-purple" style="width:<?php include("pantarei/vax_perc.txt");?>"><?php include("pantarei/vax_perc.txt");?></div>
+        <div class="w3-container w3-center w3-padding w3-purple" style="width:<?php include("pantarei/primadose_perc.txt");?>"><?php include("pantarei/primadose_perc.txt");?></div>
+        </div>
+        <h5 style="margin-top:42px; margin-left:15px">Percentuale di persone vaccinate completamente:</h5>
+        <div class="w3-grey" style="margin-left:15px;margin-right:15px">
+        <div class="w3-container w3-center w3-padding w3-purple" style="width:<?php include("pantarei/secondadose_perc.txt");?>"><?php include("pantarei/secondadose_perc.txt");?></div>
         </div>
       </div>
     </div>

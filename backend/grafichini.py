@@ -86,18 +86,28 @@ def histo(path, filename, color, ylabel):
 	plt.savefig("pantarei/" + filename + "_graph.png", dpi=300)
 	plt.clf()
 
-def vax(path, filename, color, ylabel):
+def vax(filename, color):
 
-	f = open(path)
-	y = []
+	path1 = 'pantarei/primadose_story.txt'
+	path2 = 'pantarei/secondadose_story.txt'
+	f1 = open(path1)
+	f2 = open(path2)
+	y1 = []
+	y2 = []
 	x = []
 	k = -1
-	for line in f:
+	for line in f1:
 		if k != -1:
-			y.append( float(line) )
+			y1.append( float(line) )
 			x.append(k)
 		k = k+1
-	f.close()
+	j = -1
+	for line in f2:
+		if j != -1:
+			y2.append( float(line) )
+		j = j+1
+	f1.close()
+	f2.close()
 
 	f = open("timestep_vax.txt")	#diverso timestep perché iniziato molto dopo
 	for line in f:
@@ -108,7 +118,6 @@ def vax(path, filename, color, ylabel):
 		timestep = timestep + 1
 		f.write( str(timestep) )
 		f.close()
-
 	a = date(2021, 1, 2)
 	b = date.today()
 	gap = b - a
@@ -119,10 +128,11 @@ def vax(path, filename, color, ylabel):
 		p = p.strftime("%d/%m")
 		date_list.append(p)
 
-	plt.plot(x, y, color=color)
+	plt.plot(x, y1, color=color, label = "prime dosi")
+	plt.plot(x, y2, color=color, linestyle='dashed', label = "seconde dosi")
 	plt.xticks( range(0, k, timestep), date_list )
 	plt.xlabel("data", fontsize = 14)
-	plt.ylabel(ylabel, labelpad = -429, fontsize=14)
+	plt.legend()
 	plt.grid(linewidth=0.5)
 	f = mticker.ScalarFormatter(useOffset=False, useMathText=True)
 	g = lambda x,pos : "${}$".format(f._formatSciNotation('%1.10e' % x))

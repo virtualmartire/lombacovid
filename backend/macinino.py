@@ -9,7 +9,6 @@ import shutil
 
 import grafichini as graph
 import dusi
-import neuralvax
 
 #
 ##
@@ -29,11 +28,11 @@ shutil.copy('timestep_vax.txt', 'backup')
 
 past = pd.read_csv('past.csv')
 present = pd.read_csv('present.csv')
+vaccini = pd.read_csv('vaccini.csv')
 
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
 lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
-
-neuralvax.screenshot()
+vaccini_lombardia = vaccini[ vaccini['area'] == 'LOM' ]
 
 #
 ##
@@ -64,15 +63,10 @@ tot_deceduti_past = lombardia_past['deceduti'].values[0]
 deceduti_oggi = tot_deceduti_present - tot_deceduti_past
 
 #vaccinati
-vax_tot_hp = neuralvax.gino_leggi()
-print("Ciao, sono Gino. Ecco cosa ho trovato:")
-print(vax_tot_hp)
-confirmed = input("Qual è quello giusto? (0-9/n) ")
-if confirmed == "n":
-	vax_tot = int( input("Ok dimmi tu: ") )
-else:
-	vax_tot = int(vax_tot_hp[int(confirmed)])
-vax_perc = np.around(vax_tot / 10060965 * 100, 2)
+primadose_tot = vaccini_lombardia['prima_dose'].sum()
+secondadose_tot = vaccini_lombardia['seconda_dose'].sum()
+primadose_perc = np.around(primadose_tot / 10060965 * 100, 2)
+secondadose_perc = np.around(secondadose_tot / 10060965 * 100, 2)
 
 #
 ##
@@ -100,9 +94,12 @@ f = open('pantarei/deceduti_story.txt', 'a')
 f.write( "\n" + str(deceduti_oggi) )
 f.close()
 
-#story dei vaccinati
-f = open('pantarei/vaccinati_story.txt', 'a')
-f.write( "\n" + str(vax_tot) )
+#story dei vaccini
+f = open('pantarei/primadose_story.txt', 'a')
+f.write( "\n" + str(primadose_tot) )
+f.close()
+f = open('pantarei/secondadose_story.txt', 'a')
+f.write( "\n" + str(secondadose_tot) )
 f.close()
 
 """ """
@@ -119,8 +116,8 @@ graph.curve("pantarei/terapie_story.txt", "terapie_attuali", "#44a546", "t.i. oc
 #grafico deceduti
 graph.histo("pantarei/deceduti_story.txt", "deceduti_giornalieri", "#1c8af2", "deceduti")
 
-#grafico vaccinati
-graph.vax("pantarei/vaccinati_story.txt", "tot_vaccinati", "#9023a8", "tot vaccinati")
+#grafico vaccini
+graph.vax(filename = "vaccini", color = "#9023a8")
 
 """ """
 
@@ -144,9 +141,12 @@ f = open('pantarei/deceduti_oggi.txt', 'w')
 f.write( str(deceduti_oggi) )
 f.close()
 
-#html della percentuale di vaccinati totali
-f = open('pantarei/vax_perc.txt', 'w')
-f.write( str(vax_perc) + "%")
+#html delle percentuali di vaccinati
+f = open('pantarei/primadose_perc.txt', 'w')
+f.write( str(primadose_perc) + "%")
+f.close()
+f = open('pantarei/secondadose_perc.txt', 'w')
+f.write( str(secondadose_perc) + "%")
 f.close()
 
 """ """

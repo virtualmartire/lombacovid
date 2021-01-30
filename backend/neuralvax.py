@@ -1,3 +1,5 @@
+"""La CNN che usavo per leggere la dashboard https://www.governo.it/it/cscovid19/report-vaccini/"""
+
 #
 ##
 ### SCREENSHOTTO
@@ -51,4 +53,4 @@ def gino_leggi():
 	words_list = [ pair[0] for pair in predictions_lists[0] ]
 	scope = words_list.index('lombardia')
 
-	return words_list[ scope-4 : scope+6 ]
+	return words_list[ scope-3 : scope+5 ]
