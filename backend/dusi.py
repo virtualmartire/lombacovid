@@ -10,6 +10,3 @@ def download():
 
 	file_path2 = "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv"
 	os.system('curl ' + file_path2 + ' > vaccini.csv')
-
-	if input("Dataset impostati giusti? (s/n) ") == "n":
-		exit("File smarmellati. Ciao!")

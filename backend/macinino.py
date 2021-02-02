@@ -1,5 +1,5 @@
-"""Prende i dati di ieri (past.csv) e di oggi (present.csv) per calcolare un po' di situazioni.
-Poi salva tutto nelle rispettive stories e html."""
+"""Prende i dati di ieri (past.csv), di oggi (present.csv) e dei vaccini (vaccini.csv) per calcolare
+un po' di situazioni. Poi salva tutto nelle rispettive stories e html."""
 
 import pandas as pd
 import numpy as np
@@ -16,23 +16,27 @@ import dusi
 ##
 #
 
-#controllo che esistano, altrimenti non se ne fa niente
 dusi.download()
-
-#faccio il backup
-shutil.rmtree('backup')
-os.system('cp -r pantarei backup')
-shutil.copy('past.csv', 'backup')
-shutil.copy('timestep.txt', 'backup')
-shutil.copy('timestep_vax.txt', 'backup')
 
 past = pd.read_csv('past.csv')
 present = pd.read_csv('present.csv')
 vaccini = pd.read_csv('vaccini.csv')
 
-lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
 lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
+lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
 vaccini_lombardia = vaccini[ vaccini['area'] == 'LOM' ]
+
+#controllo che siano giusti, altrimenti non se ne fa niente
+print()
+print(lombardia_present.tail(1))
+print(vaccini_lombardia.tail(1))
+if input("Dataset impostati giusti? (s/n) ") == "n":
+	exit("File smarmellati. Ciao!")
+
+#faccio il backup
+shutil.rmtree('backup')
+os.system('cp -r pantarei backup')
+shutil.copy('past.csv', 'backup')
 
 #
 ##
