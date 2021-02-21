@@ -14,37 +14,18 @@
 
   <!-- Calendario zone -->
   <script type="text/javascript">
-  function ZoneColor(){
-    
-      		var current_date = new Date().getDate();
-      		var yellow = [];
-      		var oranges = [];
-      		
-      		if(current_date > 29){
-      			document.getElementById("zona").style.color = "orange";
-      			document.getElementById("zona").innerHTML = "arancione";
-      		} else {
-      		  	document.getElementById("zona").style.background = "#e6e600";
-       	 		document.getElementById("zona").style.color = "white";
-        		document.getElementById("zona").innerHTML = "gialla";
-      		}
-      
-      		/*
-      		if ( yellow.some(item => item == current_date) ){
-        		document.getElementById("zona").style.background = "#e6e600";
-       	 		document.getElementById("zona").style.color = "white";
-        		document.getElementById("zona").innerHTML = "gialla";
-      		} else {
-      			if ( oranges.some(item => item == current_date) ){
-        			document.getElementById("zona").style.color = "orange";
-        			document.getElementById("zona").innerHTML = "arancione";
-      			} else {
-        			document.getElementById("zona").style.color = "red";
-        			document.getElementById("zona").innerHTML = "rossa";
-        		}
-        	}
-        	*/
-        
+  function zoneColor(){
+    const current_date = new Date().getDate();
+    const zone = document.getElementById("zona");
+
+    if(current_date > 29){
+      zone.style.color = "orange";
+      zone.innerHTML = "arancione";
+    } else {
+      zone.style.background = "#e6e600";
+      zone.style.color = "white";
+      zone.innerHTML = "gialla";
+    }
   }
   </script>
 
@@ -65,7 +46,7 @@
 
 </head>
 
-<body onLoad='ZoneColor()'>
+<body onLoad='zoneColor()'>
 
 <!-- Top bar -->
 <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
