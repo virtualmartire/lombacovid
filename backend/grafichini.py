@@ -2,14 +2,14 @@ from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
 from matplotlib.dates import drange, DateFormatter
 from datetime import date, timedelta
+import json
 
-def curve(path, filename, color, ylabel):
+def curve(label, filename, color, ylabel, path='pantarei/story.json'):
 
-	f = open(path)
-	y = []
-	for line in f:
-		y.append( float(line) )
-	f.close()
+	with open(path) as story_json_file:
+		story_dict = json.load(story_json_file)
+
+	y = story_dict[label]
 
 	#preparo l'array delle date
 	formatter = DateFormatter('%d/%m')
@@ -26,13 +26,12 @@ def curve(path, filename, color, ylabel):
 	plt.savefig("pantarei/" + filename + "_graph.png", dpi=300)
 	plt.clf()
 
-def histo(path, filename, color, ylabel):
+def histo(label, filename, color, ylabel, path='pantarei/story.json'):
 
-	f = open(path)
-	y = []
-	for line in f:
-		y.append( float(line) )
-	f.close()
+	with open(path) as story_json_file:
+		story_dict = json.load(story_json_file)
+
+	y = story_dict[label]
 
 	formatter = DateFormatter('%d/%m')
 	a = date(2020, 9, 1)
@@ -49,20 +48,13 @@ def histo(path, filename, color, ylabel):
 	plt.savefig("pantarei/" + filename + "_graph.png", dpi=300)
 	plt.clf()
 
-def vax(filename, color):
+def vax(filename, color, path='pantarei/story.json'):
 
-	path1 = 'pantarei/primadose_story.txt'
-	path2 = 'pantarei/secondadose_story.txt'
-	f1 = open(path1)
-	f2 = open(path2)
-	y1 = []
-	y2 = []
-	for line in f1:
-		y1.append( float(line) )
-	for line in f2:
-		y2.append( float(line) )
-	f1.close()
-	f2.close()
+	with open(path) as story_json_file:
+		story_dict = json.load(story_json_file)
+
+	y1 = story_dict['primadose_story']
+	y2 = story_dict['secondadose_story']
 
 	formatter = DateFormatter('%d/%m')
 	a = date(2021, 1, 2)

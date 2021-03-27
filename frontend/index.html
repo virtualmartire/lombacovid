@@ -14,19 +14,57 @@
 
   <!-- Calendario zone -->
   <script type="text/javascript">
-  function zoneColor(){
-    const current_date = new Date().getDate();
-    const zone = document.getElementById("zona");
-
-    if(current_date > 29){
-      zone.style.color = "orange";
-      zone.innerHTML = "arancione";
-    } else {
-      zone.style.background = "#e6e600";
-      zone.style.color = "white";
-      zone.innerHTML = "gialla";
+    function zoneColor(){
+    
+      const current_date = new Date().getDate();
+      const yellow = [];
+      const oranges = [];
+      const zone = document.getElementById("zona");
+      		
+      if(true == true){
+      	zone.style.color = "red";
+        zone.innerHTML = "rossa";
+        }
+          
+      		/*
+      		if ( yellow.some(item => item == current_date) ){
+        		zone.style.background = "#e6e600";
+       	 		zone.style.color = "white";
+        		zone.innerHTML = "gialla";
+      		} else {
+      			if ( oranges.some(item => item == current_date) ){
+        			zone.style.color = "orange";
+        			zone.innerHTML = "arancione";
+      			} else {
+        			zone.style.color = "red";
+        			zone.innerHTML = "rossa";
+        		}
+        	}
+        	*/
+        
     }
-  }
+  </script>
+
+  <!-- I dati -->
+  <script type="text/javascript">
+    async function printData() {
+      try {
+        const dati = await fetch("./pantarei/oggi.json");
+        const dati_json = await dati.json();
+
+        document.getElementById("data").innerHTML = dati_json.data;
+        document.getElementById("perc").innerHTML = dati_json.perc;
+        document.getElementById("ospedalizzati").innerHTML = dati_json.ospedalizzati_attuali;
+        document.getElementById("terapie").innerHTML = dati_json.terapie_attuali;
+        document.getElementById("deceduti").innerHTML = dati_json.deceduti_oggi;
+        document.getElementById("primedosi").style.width = dati_json.primadose_perc;
+        document.getElementById("primedosi").innerHTML = dati_json.primadose_perc;
+        document.getElementById("secondedosi").style.width = dati_json.secondadose_perc;
+        document.getElementById("secondedosi").innerHTML = dati_json.secondadose_perc;
+      } catch(error) {
+        console.error(error);
+      }
+    }
   </script>
 
   <!-- Le icone -->
@@ -53,22 +91,20 @@
   <span class="w3-bar-item w3-right">lombacovid.it</span>
 </div>
 
-<!-- !PAGE CONTENT! -->
-<div class="w3-main" style="margin-left:150px;margin-right:150px;margin-top:43px;">
+<!-- START PAGE CONTENT -->
+<div class="w3-main" style="margin-left:130px;margin-right:130px;margin-top:43px;">
 
-  <!-- -->
   <header class="w3-container" style="padding-top:22px">
-    <h5>Dati della seconda ondata di <b>coronavirus</b> inerenti alla regione <b>Lombardia (zona <span id="zona">&ensp;&ensp;&ensp;&nbsp;</span>)</b> aggiornati alle 17:00 del <b><?php include("pantarei/data.txt");?></b>.</h5>
+    <h5>Dati della seconda e terza ondata di <b>coronavirus</b> inerenti alla regione <b>Lombardia (zona <span id="zona">&ensp;&ensp;&ensp;&nbsp;</span>)</b> aggiornati alle 17:00 del <b id="data">&ensp;&ensp;&ensp;&nbsp;</b>.</h5>
   </header>
-  <!-- -->
 
-  <!-- -->
+  <!-- I RETTANGOLOZZI -->
   <div class="w3-row-padding w3-margin-bottom">
 
     <div class="w3-quarter">
       <div class="w3-container w3-red w3-padding-16">
         <div class="w3-left"><i class="fas fa-radiation w3-xxxlarge"></i></div>
-        <div class="w3-right">  <h3><?php include("pantarei/perc.txt");?></h3>  </div>
+        <div class="w3-right">  <h3 id="perc">&ensp;&ensp;&ensp;</h3>  </div>
         <div class="w3-clear"></div>
         <h4>Rapporto</h4>
       </div>
@@ -77,7 +113,7 @@
     <div class="w3-quarter">
       <div class="w3-container w3-orange w3-padding-16">
         <div class="w3-left" style="color:white"><i class="fas fa-ambulance w3-xxxlarge"></i></div>
-        <div class="w3-right" style="color:white">  <h3><?php include("pantarei/ospedalizzati.txt");?></h3>  </div>
+        <div class="w3-right" style="color:white">  <h3 id="ospedalizzati">&ensp;&ensp;&ensp;</h3>  </div>
         <div class="w3-clear"></div>
         <h4 style="color:white">Ospedalizzati</h4>
       </div>
@@ -86,7 +122,7 @@
     <div class="w3-quarter">
       <div class="w3-container w3-green w3-padding-16">
         <div class="w3-left"><i class="fas fa-procedures w3-xxxlarge"></i></div>
-        <div class="w3-right">  <h3><?php include("pantarei/terapie_attuali.txt");?></h3>   </div>
+        <div class="w3-right">  <h3 id="terapie">&ensp;&ensp;&ensp;</h3>  </div>
         <div class="w3-clear"></div>
         <h4>T. Intensive</h4>
       </div>
@@ -95,7 +131,7 @@
     <div class="w3-quarter">
       <div class="w3-container w3-blue w3-text-white w3-padding-16">
         <div class="w3-left"><i class="fas fa-hand-holding-medical w3-xxxlarge"></i></div>
-        <div class="w3-right">  <h3><?php include("pantarei/deceduti_oggi.txt");?></h3>  </div>
+        <div class="w3-right">  <h3 id="deceduti">&ensp;&ensp;&ensp;</h3> </div>
         <div class="w3-clear"></div>
         <h4>Deceduti</h4>
       </div>
@@ -104,7 +140,7 @@
   </div>
   <!-- -->
 
-  <!-- -->
+  <!-- PRIMA RIGA GRAFICI -->
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
@@ -117,7 +153,7 @@
   </div>
   <!-- -->
 
-  <!-- -->
+  <!-- SECONDA RIGA GRAFICI -->
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
@@ -130,7 +166,7 @@
   </div>
   <!-- -->
 
-  <!-- -->
+  <!-- VACCINI -->
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
@@ -139,11 +175,11 @@
       <div class="w3-half">
         <h5 style="margin-top:42px; margin-left:15px">Percentuale di persone che hanno ricevuto almeno la prima dose di vaccino:</h5>
         <div class="w3-grey" style="margin-left:15px;margin-right:15px">
-        <div class="w3-container w3-center w3-padding w3-purple" style="width:<?php include("pantarei/primadose_perc.txt");?>"><?php include("pantarei/primadose_perc.txt");?></div>
+          <div class="w3-container w3-center w3-padding w3-purple" id="primedosi"> &ensp;&ensp;&ensp; </div>
         </div>
         <h5 style="margin-top:42px; margin-left:15px">Percentuale di persone vaccinate completamente:</h5>
-        <div class="w3-grey" style="margin-left:15px;margin-right:15px">
-        <div class="w3-container w3-center w3-padding w3-purple" style="width:<?php include("pantarei/secondadose_perc.txt");?>"><?php include("pantarei/secondadose_perc.txt");?></div>
+        <div class="w3-grey" style="margin-left:15px;margin-right:15px;margin-bottom:42px">
+          <div class="w3-container w3-center w3-padding w3-purple" id="secondedosi"> &ensp;&ensp;&ensp; </div>
         </div>
       </div>
     </div>
@@ -153,19 +189,21 @@
   <hr />
 
   <div class="w3-container">
-    <h5>Il testo ufficiale dell'ultimo DPCM generale lo trovi <a href="https://www.gazzettaufficiale.it/eli/id/2021/01/15/21A00221/sg" target="_blank">qui</a>.
+    <h5>I testi ufficiali degli ultimi provvedimenti presi li trovi <a href="https://www.gazzettaufficiale.it/eli/id/2021/03/02/21A01331/sg" target="_blank">qui</a> e <a href="https://www.gazzettaufficiale.it/eli/id/2021/03/12/21G00038/sg" target="_blank">qui</a>.</h5>
   </div>
   <div class="w3-container" style="padding-bottom:22px">
     <h5>Se vuoi sapere perch&eacute ho scelto di analizzare proprio questi dati <a href="spiegazione.html">clicka qui</a>. Se invece vuoi sapere chi sono io <a href="https://www.stefanomartire.it" target="_blank">clicka qui</a>.</h5>
   </div>
 
 </div>
-<!-- End page content -->
+<!-- END PAGE CONTENT -->
 
 <!-- Footer -->
-  <footer class="w3-container w3-padding-16 w3-light-grey">
-    <p class="w3-right">Styled with <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>.</p>
-  </footer>
+<footer class="w3-container w3-padding-16 w3-light-grey">
+  <p class="w3-right">Styled with <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>.</p>
+</footer>
+
+<script type="text/javascript"> printData(); </script>
 
 </body>
 </html>

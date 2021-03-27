@@ -6,9 +6,9 @@ import numpy as np
 from datetime import date
 import os
 import shutil
+import json
 
 import grafichini as graph
-import dusi
 
 #
 ##
@@ -16,21 +16,25 @@ import dusi
 ##
 #
 
-dusi.download()
-
 past = pd.read_csv('past.csv')
+
+#present devo salvarlo perché mi serve anche domani
+os.system('curl https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-latest.csv > present.csv')
 present = pd.read_csv('present.csv')
-vaccini = pd.read_csv('vaccini.csv')
+
+#il dataset dei vaccini invece ha la history già di suo
+vaccini = pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv')
 
 lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
-vaccini_lombardia = vaccini[ vaccini['area'] == 'LOM' ]
+lombardia_vaccini = vaccini[ vaccini['area'] == 'LOM' ]
 
 #controllo che siano giusti, altrimenti non se ne fa niente
 print()
 print(lombardia_present.tail(1))
-print(vaccini_lombardia.tail(1))
+print(lombardia_vaccini.tail(1))
 if input("Dataset impostati giusti? (s/n) ") == "n":
+	os.remove('present.csv')
 	exit("File smarmellati. Ciao!")
 
 #faccio il backup
@@ -53,24 +57,24 @@ tamponi_oggi = tot_tamponi_present - tot_tamponi_past
 nuovi_positivi = lombardia_present['nuovi_positivi'].values[0]
 
 #rapporto
-percentuale = np.around(nuovi_positivi / tamponi_oggi * 100, 2)
+percentuale = np.around(nuovi_positivi / tamponi_oggi * 100, 2)					#<---
 
 #in ospedale adesso
-ospedalizzati = lombardia_present['totale_ospedalizzati'].values[0]
+ospedalizzati_attuali = lombardia_present['totale_ospedalizzati'].values[0]		#<---
 
 #in T.I. adesso
-terapie_attuali = lombardia_present['terapia_intensiva'].values[0]
+terapie_attuali = lombardia_present['terapia_intensiva'].values[0]				#<---
 
 #deceduti oggi
 tot_deceduti_present = lombardia_present['deceduti'].values[0]
 tot_deceduti_past = lombardia_past['deceduti'].values[0]
-deceduti_oggi = tot_deceduti_present - tot_deceduti_past
+deceduti_oggi = tot_deceduti_present - tot_deceduti_past						#<---
 
 #vaccinati
-primadose_tot = vaccini_lombardia['prima_dose'].sum()
-secondadose_tot = vaccini_lombardia['seconda_dose'].sum()
-primadose_perc = np.around(primadose_tot / 10060965 * 100, 2)
-secondadose_perc = np.around(secondadose_tot / 10060965 * 100, 2)
+primadose_tot = lombardia_vaccini['prima_dose'].sum()							#<---
+secondadose_tot = lombardia_vaccini['seconda_dose'].sum()						#<---
+primadose_perc = np.around(primadose_tot / 10060965 * 100, 2)					#<---
+secondadose_perc = np.around(secondadose_tot / 10060965 * 100, 2)				#<---
 
 #
 ##
@@ -78,87 +82,43 @@ secondadose_perc = np.around(secondadose_tot / 10060965 * 100, 2)
 ##
 #
 
-#story dei rapporti
-f = open('pantarei/perc_story.txt', 'a')
-f.write( "\n" + str(percentuale) )
-f.close()
+# Le stories
+with open('pantarei/story.json') as story_json_file:
+	story_dict = json.load(story_json_file)
 
-#story degli ospedalizzati
-f = open('pantarei/ospedalizzati_story.txt', 'a')
-f.write( "\n" + str(ospedalizzati) )
-f.close()
+story_dict['perc_story'] += [float(percentuale)]						#è una python list
+story_dict['ospedalizzati_story'] += [float(ospedalizzati_attuali)]
+story_dict['terapie_story'] += [float(terapie_attuali)]
+story_dict['deceduti_story'] += [float(deceduti_oggi)]
+story_dict['primadose_story'] += [float(primadose_tot)]
+story_dict['secondadose_story'] += [float(secondadose_tot)]
 
-#story delle terapie
-f = open('pantarei/terapie_story.txt', 'a')
-f.write( "\n" + str(terapie_attuali) )
-f.close()
+with open('pantarei/story.json', "w") as story_json_file:
+	json.dump(story_dict, story_json_file)
 
-#story dei deceduti
-f = open('pantarei/deceduti_story.txt', 'a')
-f.write( "\n" + str(deceduti_oggi) )
-f.close()
-
-#story dei vaccini
-f = open('pantarei/primadose_story.txt', 'a')
-f.write( "\n" + str(primadose_tot) )
-f.close()
-f = open('pantarei/secondadose_story.txt', 'a')
-f.write( "\n" + str(secondadose_tot) )
-f.close()
-
-""" """
-
-#grafico rapporti
-graph.curve(path = "pantarei/perc_story.txt", filename = "rapporto", color = "#f33a30", ylabel = "rapporto = pos/tam")
-
-#grafico ospedalizzati
-graph.curve("pantarei/ospedalizzati_story.txt", "ospedalizzati", "#f99726", "ospedalizzati")
-
-#grafico terapie
-graph.curve("pantarei/terapie_story.txt", "terapie_attuali", "#44a546", "t.i. occupate")
-
-#grafico deceduti
-graph.histo("pantarei/deceduti_story.txt", "deceduti_giornalieri", "#1c8af2", "deceduti")
-
-#grafico vaccini
+# I grafici
+graph.curve(label = 'perc_story', filename = "rapporto", color = "#f33a30", ylabel = "rapporto = pos/tam")
+graph.curve('ospedalizzati_story', "ospedalizzati", "#f99726", "ospedalizzati")
+graph.curve('terapie_story', "terapie_attuali", "#44a546", "t.i. occupate")
+graph.histo('deceduti_story', "deceduti_giornalieri", "#1c8af2", "deceduti")
 graph.vax(filename = "vaccini", color = "#9023a8")
 
-""" """
+# Gli HTML
+with open('pantarei/oggi.json') as oggi_json_file:
+	oggi_dict = json.load(oggi_json_file)
 
-#html del rapporto
-f = open('pantarei/perc.txt', 'w')
-f.write( str(percentuale) + "%" )
-f.close()
-
-#html degli ospedalizzati
-f = open('pantarei/ospedalizzati.txt', 'w')
-f.write( str(ospedalizzati) )
-f.close()
-
-#html delle terapie attuali
-f = open('pantarei/terapie_attuali.txt', 'w')
-f.write( str(terapie_attuali) )
-f.close()
-
-#html dei deceduti oggi
-f = open('pantarei/deceduti_oggi.txt', 'w')
-f.write( str(deceduti_oggi) )
-f.close()
-
-#html delle percentuali di vaccinati
-f = open('pantarei/primadose_perc.txt', 'w')
-f.write( str(primadose_perc) + "%")
-f.close()
-f = open('pantarei/secondadose_perc.txt', 'w')
-f.write( str(secondadose_perc) + "%")
-f.close()
-
-""" """
+oggi_dict['perc'] = str(percentuale) + "%"
+oggi_dict['ospedalizzati_attuali'] = str(ospedalizzati_attuali)
+oggi_dict['terapie_attuali'] = str(terapie_attuali)
+oggi_dict['deceduti_oggi'] = str(deceduti_oggi)
+oggi_dict['primadose_perc'] = str(primadose_perc) + "%"
+oggi_dict['secondadose_perc'] = str(secondadose_perc) + "%"
 
 giorno = date.today().strftime("%d/%m/%Y")
-f = open('pantarei/data.txt', 'w')
-f.write( str(giorno) )
-f.close()
+oggi_dict['data'] = str(giorno)
+
+with open('pantarei/oggi.json', "w") as oggi_json_file:
+	json.dump(oggi_dict, oggi_json_file)
 
 #
 ##
@@ -166,7 +126,7 @@ f.close()
 ##
 #
 
-os.remove("past.csv")
+os.remove('past.csv')
 os.rename(r'present.csv', r'past.csv')
 
 print("Fatto. Dati aggiornati al " + str(giorno) + ".")
