@@ -14,6 +14,7 @@
 
   <!-- Calendario zone -->
   <script type="text/javascript">
+
     function zoneColor(){
     
       const current_date = new Date().getDate();
@@ -21,11 +22,12 @@
       const oranges = [];
       const zone = document.getElementById("zona");
       		
-      if(true == true){
-      	zone.style.color = "red";
-        zone.innerHTML = "rossa";
-        }
-          
+      if(true){
+      	zone.style.background = "#e6e600";
+       	zone.style.color = "white";
+       	zone.innerHTML = "gialla";
+      }
+         
       		/*
       		if ( yellow.some(item => item == current_date) ){
         		zone.style.background = "#e6e600";
@@ -43,6 +45,7 @@
         	*/
         
     }
+
   </script>
 
   <!-- I dati -->
@@ -95,7 +98,7 @@
 <div class="w3-main" style="margin-left:130px;margin-right:130px;margin-top:43px;">
 
   <header class="w3-container" style="padding-top:22px">
-    <h5>Dati della seconda e terza ondata di <b>coronavirus</b> inerenti alla regione <b>Lombardia (zona <span id="zona">&ensp;&ensp;&ensp;&nbsp;</span>)</b> aggiornati alle 17:00 del <b id="data">&ensp;&ensp;&ensp;&nbsp;</b>.</h5>
+    <h5>Dati della seconda e terza ondata di <b>coronavirus</b> inerenti alla regione <b>Lombardia (zona <span id="zona">&ensp;&ensp;&ensp;&nbsp;</span>)</b> aggiornati alle 18:00 del <b id="data">&ensp;&ensp;&ensp;&nbsp;</b>.</h5>
   </header>
 
   <!-- I RETTANGOLOZZI -->
@@ -189,7 +192,7 @@
   <hr />
 
   <div class="w3-container">
-    <h5>I testi ufficiali degli ultimi provvedimenti presi li trovi <a href="https://www.gazzettaufficiale.it/eli/id/2021/03/02/21A01331/sg" target="_blank">qui</a> e <a href="https://www.gazzettaufficiale.it/eli/id/2021/03/12/21G00038/sg" target="_blank">qui</a>.</h5>
+    <h5>I testi ufficiali degli ultimi provvedimenti presi li trovi <a href="https://www.gazzettaufficiale.it/dettaglioArea/12" target="_blank">qui</a>.</h5>
   </div>
   <div class="w3-container" style="padding-bottom:22px">
     <h5>Se vuoi sapere perch&eacute ho scelto di analizzare proprio questi dati <a href="spiegazione.html">clicka qui</a>. Se invece vuoi sapere chi sono io <a href="https://www.stefanomartire.it" target="_blank">clicka qui</a>.</h5>

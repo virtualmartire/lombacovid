@@ -1,5 +1,5 @@
-"""Prende i dati di ieri (past.csv), di oggi (present.csv) e dei vaccini (vaccini.csv) per calcolare
-un po' di situazioni. Poi salva tutto nelle rispettive stories e html."""
+"""Prende i dati di ieri (past.csv), di oggi (present.csv) e dei vaccini (vaccini.csv) per calcolare ed esportare
+un po' di situazioni."""
 
 import pandas as pd
 import numpy as np
@@ -9,6 +9,8 @@ import shutil
 import json
 
 import grafichini as graph
+
+print()
 
 #
 ##
@@ -32,10 +34,17 @@ lombardia_vaccini = vaccini[ vaccini['area'] == 'LOM' ]
 #controllo che siano giusti, altrimenti non se ne fa niente
 print()
 print(lombardia_present.tail(1))
+print()
 print(lombardia_vaccini.tail(1))
-if input("Dataset impostati giusti? (s/n) ") == "n":
+print()
+datacheck = input("Dataset impostati giusti? (s/n) ")
+if datacheck == "n":
 	os.remove('present.csv')
+	print()
 	exit("File smarmellati. Ciao!")
+elif datacheck != "s":
+	print()
+	raise Exception("Risposta umana non riconosciuta.")
 
 #faccio il backup
 shutil.rmtree('backup')
@@ -71,10 +80,13 @@ tot_deceduti_past = lombardia_past['deceduti'].values[0]
 deceduti_oggi = tot_deceduti_present - tot_deceduti_past						#<---
 
 #vaccinati
-primadose_tot = lombardia_vaccini['prima_dose'].sum()							#<---
-secondadose_tot = lombardia_vaccini['seconda_dose'].sum()						#<---
-primadose_perc = np.around(primadose_tot / 10060965 * 100, 2)					#<---
-secondadose_perc = np.around(secondadose_tot / 10060965 * 100, 2)				#<---
+lombardia_vaccini_janssen = lombardia_vaccini[ lombardia_vaccini['fornitore'] == 'Janssen' ]
+lombardia_vaccini_janssen_tot = lombardia_vaccini_janssen['prima_dose'].sum()
+#
+primadose_tot = lombardia_vaccini['prima_dose'].sum() - lombardia_vaccini_janssen_tot			#<---
+secondadose_tot = lombardia_vaccini['seconda_dose'].sum() + lombardia_vaccini_janssen_tot		#<---
+primadose_perc = np.around(primadose_tot / 10060965 * 100, 2)									#<---
+secondadose_perc = np.around(secondadose_tot / 10060965 * 100, 2)								#<---
 
 #
 ##
@@ -129,4 +141,4 @@ with open('pantarei/oggi.json', "w") as oggi_json_file:
 os.remove('past.csv')
 os.rename(r'present.csv', r'past.csv')
 
-print("Fatto. Dati aggiornati al " + str(giorno) + ".")
+print("\nFatto. Dati aggiornati al " + str(giorno) + ".")
