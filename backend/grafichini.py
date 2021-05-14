@@ -31,7 +31,11 @@ def histo(label, filename, color, ylabel, path='pantarei/story.json'):
 	with open(path) as story_json_file:
 		story_dict = json.load(story_json_file)
 
-	y = story_dict[label]
+	y_bars = story_dict[label]
+    
+	y_fit = y_bars.copy()
+	for i in range(2, len(y_fit)-2):
+		y_fit[i] = (y_bars[i-2] + y_bars[i-1] + y_bars[i] + y_bars[i+1] + y_bars[i+2]) / 5
 
 	formatter = DateFormatter('%d/%m')
 	a = date(2020, 9, 1)
@@ -39,12 +43,14 @@ def histo(label, filename, color, ylabel, path='pantarei/story.json'):
 	delta = timedelta(days=1)
 	dates = drange(a, b, delta)
 
-	plt.bar(dates, y, color=color)
+	plt.plot(dates, y_fit, color=color, label="media mobile")
+	plt.bar(dates, y_bars, color="#9fcef9", label="val. assoluto")
 	plt.gca().xaxis_date()
 	plt.xlabel("data", fontsize = 14)
 	plt.gca().xaxis.set_major_formatter(formatter)
 	plt.ylabel(ylabel, fontsize=14)
 	plt.grid(linewidth=0.5, axis='y')
+	plt.legend()
 	plt.savefig("pantarei/" + filename + "_graph.png", dpi=300)
 	plt.clf()
 
