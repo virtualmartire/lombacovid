@@ -1,4 +1,4 @@
-Trovate nelle cartelle qui accanto tutto il codice sottostante il progetto lombacovid.it aggiornato al giorno 2 maggio 2021.
+Trovate nelle cartelle qui accanto tutto il codice sottostante il progetto lombacovid.it aggiornato al giorno 14 maggio 2021.
 
 +++ BACKEND +++
 
