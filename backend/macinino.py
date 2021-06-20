@@ -115,7 +115,7 @@ graph.curve('terapie_story', "terapie_attuali", "#44a546", "t.i. occupate")
 graph.histo('deceduti_story', "deceduti_giornalieri", "#1c8af2", "deceduti")
 graph.vax(filename = "vaccini", color = "#9023a8")
 
-# Gli HTML
+# Gli oggi
 with open('pantarei/oggi.json') as oggi_json_file:
 	oggi_dict = json.load(oggi_json_file)
 
@@ -142,3 +142,4 @@ os.remove('past.csv')
 os.rename(r'present.csv', r'past.csv')
 
 print("\nFatto. Dati aggiornati al " + str(giorno) + ".")
+os.system('open /Users/stefanomartire/Documents/GitHub/lombacovid/backend/pantarei')
