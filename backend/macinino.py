@@ -109,10 +109,10 @@ with open('pantarei/story.json', "w") as story_json_file:
 	json.dump(story_dict, story_json_file)
 
 # I grafici
-graph.curve(label = 'perc_story', filename = "rapporto", color = "#f33a30", ylabel = "rapporto = pos/tam")
+graph.curve_and_mean('perc_story', "rapporto", ["#f33a30", "#fcd2cf"], "rapporto = pos/tam")
 graph.curve('ospedalizzati_story', "ospedalizzati", "#f99726", "ospedalizzati")
 graph.curve('terapie_story', "terapie_attuali", "#44a546", "t.i. occupate")
-graph.histo('deceduti_story', "deceduti_giornalieri", "#1c8af2", "deceduti")
+graph.histo_and_mean('deceduti_story', "deceduti_giornalieri", ["#1c8af2", "#9fcef9"], "deceduti")
 graph.vax(filename = "vaccini", color = "#9023a8")
 
 # Gli oggi

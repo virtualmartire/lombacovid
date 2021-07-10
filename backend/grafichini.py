@@ -26,7 +26,36 @@ def curve(label, filename, color, ylabel, path='pantarei/story.json'):
 	plt.savefig("pantarei/" + filename + "_graph.png", dpi=300)
 	plt.clf()
 
-def histo(label, filename, color, ylabel, path='pantarei/story.json'):
+def curve_and_mean(label, filename, colors, ylabel, path='pantarei/story.json'):
+
+	with open(path) as story_json_file:
+		story_dict = json.load(story_json_file)
+
+	y_real = story_dict[label]
+
+	y_fit = y_real.copy()
+	for i in range(2, len(y_fit)-2):
+		y_fit[i] = (y_real[i-2] + y_real[i-1] + y_real[i] + y_real[i+1] + y_real[i+2]) / 5
+
+	#preparo l'array delle date
+	formatter = DateFormatter('%d/%m')
+	a = date(2020, 9, 1)
+	b = date.today() + timedelta(days=1)
+	delta = timedelta(days=1)
+	dates = drange(a, b, delta)
+
+	plt.plot(dates, y_real, "--", color=colors[1], label="val. assoluto")
+	plt.plot(dates, y_fit, color=colors[0], label="media mobile")
+	plt.gca().xaxis_date()
+	plt.xlabel("data", fontsize = 14)
+	plt.gca().xaxis.set_major_formatter(formatter)
+	plt.ylabel(ylabel, fontsize=14)
+	plt.grid(linewidth=0.5)
+	plt.legend()
+	plt.savefig("pantarei/" + filename + "_graph.png", dpi=300)
+	plt.clf()
+
+def histo_and_mean(label, filename, colors, ylabel, path='pantarei/story.json'):
 
 	with open(path) as story_json_file:
 		story_dict = json.load(story_json_file)
@@ -43,8 +72,8 @@ def histo(label, filename, color, ylabel, path='pantarei/story.json'):
 	delta = timedelta(days=1)
 	dates = drange(a, b, delta)
 
-	plt.plot(dates, y_fit, color=color, label="media mobile")
-	plt.bar(dates, y_bars, color="#9fcef9", label="val. assoluto")
+	plt.plot(dates, y_fit, color=colors[0], label="media mobile")
+	plt.bar(dates, y_bars, color=colors[1], label="val. assoluto")
 	plt.gca().xaxis_date()
 	plt.xlabel("data", fontsize = 14)
 	plt.gca().xaxis.set_major_formatter(formatter)
