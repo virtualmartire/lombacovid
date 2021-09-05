@@ -2,6 +2,8 @@
 <html>
 <head>
 
+  <title>lombacovid.it</title>
+
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-181057130-1"></script>
   <script>
@@ -12,81 +14,31 @@
       gtag('config', 'UA-181057130-1');
   </script>
 
-  <!-- Calendario zone -->
-  <script type="text/javascript">
-
-    function zoneColor(){
-    
-      const current_date = new Date().getDate();
-      const yellow = [];
-      const oranges = [];
-      const zone = document.getElementById("zona");
-      		
-      if(true){
-      	zone.style.background = "black";
-       		zone.style.color = "white";
-       		zone.innerHTML = "bianca";
-      } 
-      		/*
-      		if ( yellow.some(item => item == current_date) ){
-        		zone.style.background = "#e6e600";
-       	 		zone.style.color = "white";
-        		zone.innerHTML = "gialla";
-      		} else {
-      			if ( oranges.some(item => item == current_date) ){
-        			zone.style.color = "orange";
-        			zone.innerHTML = "arancione";
-      			} else {
-        			zone.style.color = "red";
-        			zone.innerHTML = "rossa";
-        		}
-        	}
-        	*/
-        
-    }
-
-  </script>
-
-  <!-- I dati -->
-  <script type="text/javascript">
-    async function printData() {
-      try {
-        const dati = await fetch("./pantarei/oggi.json");
-        const dati_json = await dati.json();
-
-        document.getElementById("data").innerHTML = dati_json.data;
-        document.getElementById("perc").innerHTML = dati_json.perc;
-        document.getElementById("ospedalizzati").innerHTML = dati_json.ospedalizzati_attuali;
-        document.getElementById("terapie").innerHTML = dati_json.terapie_attuali;
-        document.getElementById("deceduti").innerHTML = dati_json.deceduti_oggi;
-        document.getElementById("primedosi").style.width = dati_json.primadose_perc;
-        document.getElementById("primedosi").innerHTML = dati_json.primadose_perc;
-        document.getElementById("secondedosi").style.width = dati_json.secondadose_perc;
-        document.getElementById("secondedosi").innerHTML = dati_json.secondadose_perc;
-      } catch(error) {
-        console.error(error);
-      }
-    }
-  </script>
-
   <!-- Le icone -->
   <script src="https://kit.fontawesome.com/9c153dbbbb.js" crossorigin="anonymous"></script>
 
-  <title>lombacovid.it</title>
+  <!-- I grafici -->
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
 
+  <!-- Lo stile -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <link rel="stylesheet" href="css/w3.css">
   <link rel="stylesheet" href="css/raleway.css">
   <link rel="stylesheet" href="css/font-awesome.css">
   <style>
     html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   </style>
+  <!-- -->
+
+  <!-- Gli script -->
+  <script src="creator.js"></script>
+  <script src="grafichini.js"></script>
+  <!-- -->
 
 </head>
 
-<body onLoad='zoneColor()'>
+<body>
 
 <!-- Top bar -->
 <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
@@ -141,15 +93,15 @@
 
   </div>
   <!-- -->
-
+  
   <!-- PRIMA RIGA GRAFICI -->
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
-        <img src="pantarei/rapporto_graph.png" style="width:100%">
+        <div id="grafico_rapporto" style="width:100%"></div>
       </div>
       <div class="w3-half">
-        <img src="pantarei/ospedalizzati_graph.png" style="width:100%">
+        <div id="grafico_ospedalizzati" style="width:100%"></div>
       </div>
     </div>
   </div>
@@ -159,10 +111,10 @@
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
-        <img src="pantarei/terapie_attuali_graph.png" style="width:100%">
+        <div id="grafico_terapie" style="width:100%"></div>
       </div>
       <div class="w3-half">
-        <img src="pantarei/deceduti_giornalieri_graph.png" style="width:100%">
+        <div id="grafico_deceduti" style="width:100%"></div>
       </div>
     </div>
   </div>
@@ -172,7 +124,7 @@
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
-        <img src="pantarei/vaccini_graph.png" style="width:100%">
+        <div id="grafico_vaccini" style="width:100%"></div>
       </div>
       <div class="w3-half">
         <h5 style="margin-top:42px; margin-left:15px">Percentuale di persone che hanno ricevuto almeno la prima dose di vaccino su tutta la popolazione lombarda:</h5>
@@ -205,7 +157,7 @@
   <p class="w3-right">Styled with <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>.</p>
 </footer>
 
-<script type="text/javascript"> printData(); </script>
+<script> fillPage(); </script>
 
 </body>
 </html>

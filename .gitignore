@@ -1,9 +1,3 @@
 .DS_Store
-backend/.DS_Store
 frontend/.DS_Store
-backend/backup/.DS_Store
-backend/pantarei/.DS_Store
-
-backend/__pycache__/
-backend/backend_old/
-frontend/frontend_old/
+old/
