@@ -3,7 +3,7 @@ un po' di situazioni."""
 
 import pandas as pd
 import numpy as np
-from datetime import date
+import datetime
 import os
 import json
 
@@ -15,26 +15,26 @@ print()
 ##
 #
 
-past = pd.read_csv('past.csv')
-
-#present devo salvarlo perché mi serve anche domani
-os.system('curl https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-latest.csv > present.csv')
-present = pd.read_csv('present.csv')
-
-#il dataset dei vaccini invece ha la history già di suo
-vaccini = pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv')
-
-lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
+# Carico l'ultimo dataset disponibile
+present = pd.read_csv('https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-latest.csv')
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
-lombardia_vaccini = vaccini[ vaccini['area'] == 'LOM' ]
 
-#check dei dati ricevuti
-oggi = date.today().strftime("%Y-%m-%d")
+# Verifico che l'ultimo dataset disponibile sia quello di oggi
+oggi = datetime.date.today().strftime("%Y-%m-%d")
 ultimo_aggiornamento = lombardia_present['data'].values[0][:10]
 if oggi != ultimo_aggiornamento:
 	exit("File smarmellati. Ciao!")
 else:
 	print("Elaboro...")
+
+# Carico i restanti dataset: past e vaccini
+yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
+yesterday_url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-'+yesterday+'.csv'
+past = pd.read_csv(yesterday_url)
+lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
+
+vaccini = pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv')
+lombardia_vaccini = vaccini[ vaccini['area'] == 'LOM' ]
 
 #
 ##
@@ -87,7 +87,7 @@ story_dict['deceduti_story'] += [float(deceduti_oggi)]
 story_dict['primadose_story'] += [float(primadose_tot)]
 story_dict['secondadose_story'] += [float(secondadose_tot)]
 
-giorno = date.today().strftime("%d/%m/%Y")
+giorno = datetime.date.today().strftime("%d/%m/%Y")
 story_dict['data'] = str(giorno)
 
 with open('./story.json', "w") as story_json_file:
@@ -99,7 +99,5 @@ with open('./story.json', "w") as story_json_file:
 ##
 #
 
-os.remove('past.csv')
-os.rename(r'present.csv', r'past.csv')
-
-print("\nFatto. Dati aggiornati al " + str(giorno) + ".")
+print()
+print("Fatto. Dati aggiornati al " + str(giorno) + ".")
