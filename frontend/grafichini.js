@@ -77,7 +77,8 @@ function curve(values, colors, titles, y_label, element_id, with_mean = false, s
             0: { color: colors[0] }
         },
         legend: {position: 'none'},
-        height: 500,
+        width: '100%',
+        height: document.getElementById(element_id).offsetWidth,
         hAxis: { textStyle: {fontSize: 14} },
         vAxis: { textStyle: {fontSize: 14} },
         chartArea: {width: '70%', height: '70%'}
@@ -136,7 +137,8 @@ function histo(values, colors, titles, y_label, element_id, with_mean = false, s
             0: { color: colors[0], type: 'bars' }
         },
         legend: {position: 'none'},
-        height: 500,
+        width: '100%',
+        height: document.getElementById(element_id).offsetWidth,
         hAxis: { textStyle: {fontSize: 14} },
         vAxis: { title: y_label, textStyle: {fontSize: 14} },
         chartArea: {width: '70%', height: '70%'}

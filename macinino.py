@@ -1,11 +1,12 @@
-"""Prende i dati di ieri (past.csv), di oggi (present.csv) e dei vaccini (GitHub raw) per calcolare ed esportare
-un po' di situazioni."""
+"""Prende da GitHub i dati di ieri, di oggi e dei vaccini per calcolare ed esportare un po' di situazioni."""
 
 import pandas as pd
 import numpy as np
 import datetime
 import os
 import json
+import urllib.request
+import ftplib
 
 print()
 
@@ -20,12 +21,18 @@ present = pd.read_csv('https://raw.githubusercontent.com/pcm-dpc/COVID-19/master
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
 
 # Verifico che l'ultimo dataset disponibile sia quello di oggi
-oggi = datetime.date.today().strftime("%Y-%m-%d")
+oggi_dash = datetime.date.today().strftime('%Y-%m-%d')
 ultimo_aggiornamento = lombardia_present['data'].values[0][:10]
-if oggi != ultimo_aggiornamento:
+if oggi_dash != ultimo_aggiornamento:
 	exit("File smarmellati. Ciao!")
-else:
-	print("Elaboro...")
+# e che il sito non sia già stato aggiornato
+oggi_slash = datetime.date.today().strftime('%d/%m/%Y')		# <---
+with urllib.request.urlopen('https://www.lombacovid.it/story.json') as story_file:
+    story_dict = json.load(story_file)		# <---
+if oggi_slash == story_dict['data']:
+	exit("Sito già aggiornato!")
+
+print("Elaboro...")
 
 # Carico i restanti dataset: past e vaccini
 yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
@@ -77,21 +84,28 @@ secondadose_tot = lombardia_vaccini['seconda_dose'].sum() + lombardia_vaccini_ja
 ##
 #
 
-with open('./story.json') as story_json_file:
-	story_dict = json.load(story_json_file)
-
 story_dict['perc_story'] += [float(percentuale)]						#è una python list
 story_dict['ospedalizzati_story'] += [float(ospedalizzati_attuali)]
 story_dict['terapie_story'] += [float(terapie_attuali)]
 story_dict['deceduti_story'] += [float(deceduti_oggi)]
 story_dict['primadose_story'] += [float(primadose_tot)]
 story_dict['secondadose_story'] += [float(secondadose_tot)]
+story_dict['data'] = str(oggi_slash)
 
-giorno = datetime.date.today().strftime("%d/%m/%Y")
-story_dict['data'] = str(giorno)
+with open('credentials.json', 'r') as credentials_file:
+	credentials_dict = json.load(credentials_file)
+user = credentials_dict['id']
+password = credentials_dict['password']
 
-with open('./story.json', "w") as story_json_file:
-	json.dump(story_dict, story_json_file)
+session = ftplib.FTP('ftp.lombacovid.it', user, password)
+
+with open('frontend/story.json', 'w') as story_file:
+	json.dump(story_dict, story_file)
+
+with open('frontend/story.json', 'rb') as story_file:
+    session.storbinary('STOR www.lombacovid.it/story.json', story_file)
+
+session.quit()
 
 #
 ##
@@ -100,4 +114,4 @@ with open('./story.json', "w") as story_json_file:
 #
 
 print()
-print("Fatto. Dati aggiornati al " + str(giorno) + ".")
+print("Fatto. Dati aggiornati al " + str(oggi_slash) + ".")
