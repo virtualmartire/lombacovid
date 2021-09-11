@@ -1,4 +1,4 @@
-Trovate in questa repo tutto il codice sottostante il progetto lombacovid.it aggiornato al giorno 7 settembre 2021.
+Trovate in questa repo tutto il codice sottostante il progetto lombacovid.it aggiornato al giorno 11 settembre 2021.
 
 # macinino
 
