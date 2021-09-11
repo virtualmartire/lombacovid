@@ -2,7 +2,7 @@ Trovate in questa repo tutto il codice sottostante il progetto lombacovid.it agg
 
 # macinino
 
-"macinino.py" è il motore del sito. Dopo aver recuperato i dati del progetto (dal file story.json), aver controllato che il sito non sia già stato aggiornato e aver verificato che siano stati pubblicati dei dati nuovi, è l'algoritmo che aggiorna tutti i valori e li pubblica di nuovo sul server.
+"macinino.py" è il motore del sito. Dopo aver recuperato i dati del progetto (dal file story.json), aver controllato che il sito non sia già stato aggiornato e aver verificato che siano stati pubblicati dei dati nuovi, è l'algoritmo che aggiorna tutti i valori e li pubblica di nuovo sul server. Il Dockerfile presente in questa repo permette di riprodurlo in maniera completamente affidabile e portatile.
 
 # frontend
 
