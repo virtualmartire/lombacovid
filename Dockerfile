@@ -1,4 +1,4 @@
-FROM balenalib/raspberry-pi-python:3.9.6-stretch-run
+FROM python:3.9.7
 
 
 RUN apt-get update && apt-get upgrade
