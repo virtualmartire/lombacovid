@@ -1,8 +1,20 @@
-FROM balenalib/raspberry-pi-python:3
+FROM debian:buster-slim
 
 
-RUN apt-get update && apt-get upgrade
-RUN pip install pandas==1.1.5
+RUN sudo apt update
+RUN sudo apt upgrade
+RUN sudo apt dist-upgrade
+RUN sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
+
+RUN mkdir ~/tmp
+RUN cd ~/tmp
+RUN wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz
+RUN tar -xvzf Python-3.9.0.tgz
+RUN cd Python-3.9.0
+RUN ./configure
+RUN sudo make install
+
+RUN pip install pandas==1.3.3
 
 WORKDIR /lombacovid
 COPY . .
