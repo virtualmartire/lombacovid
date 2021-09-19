@@ -1,6 +1,4 @@
-FROM python@sha256:eec73d7e9ace1e12242b9612726e31e2f463e5f50c128a53a5621e9694299fda
-
-RUN apt update && apt full-upgrade
+FROM arm32v6/python:3.6-alpine3.13
 
 RUN pip install pandas==1.3.3
 
