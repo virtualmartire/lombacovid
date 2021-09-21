@@ -1,6 +1,6 @@
-FROM arm32v6/python:3.6-alpine3.13
+FROM python:3.6
 
-RUN pip install pandas==1.3.3
+RUN pip install pandas==1.1.5
 
 WORKDIR /lombacovid
 COPY . .
