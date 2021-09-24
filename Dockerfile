@@ -1,4 +1,7 @@
-FROM python:3.6
+FROM python:3.6-buster
+
+RUN apt-get update && apt-get upgrade
+RUN pip install --upgrade pip
 
 RUN pip install pandas==1.1.5
 
