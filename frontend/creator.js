@@ -18,7 +18,7 @@ async function printNumbers() {
         document.getElementById("deceduti").innerHTML = dati_json.deceduti_story[dati_json.deceduti_story.length-1];
 
         const popolazione_lombarda = 10060965;
-        const popolazione_lombarda_over12 = 1051819;
+        const popolazione_lombarda_over12 = popolazione_lombarda - 1051819;
 
         const primadose_perc = String((dati_json.primadose_story[dati_json.primadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
         document.getElementById("primedosi").style.width = primadose_perc;
