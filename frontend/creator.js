@@ -17,13 +17,20 @@ async function printNumbers() {
         document.getElementById("terapie").innerHTML = dati_json.terapie_story[dati_json.terapie_story.length-1];
         document.getElementById("deceduti").innerHTML = dati_json.deceduti_story[dati_json.deceduti_story.length-1];
 
-        const primadose_perc = String((dati_json.primadose_story[dati_json.primadose_story.length-1] / 10060965 * 100).toFixed(2))+"%";
+        const popolazione_lombarda = 10060965;
+        const popolazione_lombarda_over12 = 1051819;
+
+        const primadose_perc = String((dati_json.primadose_story[dati_json.primadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
         document.getElementById("primedosi").style.width = primadose_perc;
         document.getElementById("primedosi").innerHTML = primadose_perc;
 
-        const secondadose_perc = String((dati_json.secondadose_story[dati_json.secondadose_story.length-1] / 10060965 * 100).toFixed(2))+"%";
+        const secondadose_perc = String((dati_json.secondadose_story[dati_json.secondadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
         document.getElementById("secondedosi").style.width = secondadose_perc;
         document.getElementById("secondedosi").innerHTML = secondadose_perc;
+
+        const secondadose_perc_12anni = String((dati_json.secondadose_story[dati_json.secondadose_story.length-1] / popolazione_lombarda_over12 * 100).toFixed(2))+"%";
+        document.getElementById("secondedosi_12anni").style.width = secondadose_perc_12anni;
+        document.getElementById("secondedosi_12anni").innerHTML = secondadose_perc_12anni;
 
     } catch(error) {
         console.error(error);
