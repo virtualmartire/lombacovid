@@ -20,10 +20,6 @@ async function printNumbers() {
         const popolazione_lombarda = 10060965;
         const popolazione_lombarda_over12 = popolazione_lombarda - 1051819;
 
-        const primadose_perc = String((dati_json.primadose_story[dati_json.primadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
-        document.getElementById("primedosi").style.width = primadose_perc;
-        document.getElementById("primedosi").innerHTML = primadose_perc;
-
         const secondadose_perc = String((dati_json.secondadose_story[dati_json.secondadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
         document.getElementById("secondedosi").style.width = secondadose_perc;
         document.getElementById("secondedosi").innerHTML = secondadose_perc;
@@ -31,6 +27,10 @@ async function printNumbers() {
         const secondadose_perc_12anni = String((dati_json.secondadose_story[dati_json.secondadose_story.length-1] / popolazione_lombarda_over12 * 100).toFixed(2))+"%";
         document.getElementById("secondedosi_12anni").style.width = secondadose_perc_12anni;
         document.getElementById("secondedosi_12anni").innerHTML = secondadose_perc_12anni;
+
+        const terzadose_perc = String((dati_json.terzadose_story[dati_json.terzadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
+        document.getElementById("terzedosi").style.width = terzadose_perc;
+        document.getElementById("terzedosi").innerHTML = terzadose_perc;
 
     } catch(error) {
         console.error(error);
@@ -72,9 +72,9 @@ async function drawCharts() {
                 'grafico_deceduti',
                 true,
                 new Date(2020, 8, 1));
-        curve(  [time_series_json['primadose_story'], time_series_json['secondadose_story']],
-                ['#9023a8', '#9023a8'],
-                ["prime dosi", "seconde dosi"],
+        curve(  [time_series_json['terzadose_story'], time_series_json['secondadose_story']],
+                ['#e91e62', '#9023a8'],
+                ["terze dosi", "seconde dosi"],
                 "dosi somministrate",
                 'grafico_vaccini',
                 false,

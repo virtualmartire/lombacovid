@@ -75,8 +75,9 @@ deceduti_oggi = tot_deceduti_present - tot_deceduti_past						#<---
 lombardia_vaccini_janssen = lombardia_vaccini[ lombardia_vaccini['fornitore'] == 'Janssen' ]
 lombardia_vaccini_janssen_tot = lombardia_vaccini_janssen['prima_dose'].sum()
 #
-primadose_tot = lombardia_vaccini['prima_dose'].sum() - lombardia_vaccini_janssen_tot			#<---
-secondadose_tot = lombardia_vaccini['seconda_dose'].sum() + lombardia_vaccini_janssen_tot
+primadose_tot = lombardia_vaccini['prima_dose'].sum() - lombardia_vaccini_janssen_tot					#<---
+secondadose_tot = lombardia_vaccini['seconda_dose'].sum() + lombardia_vaccini_janssen_tot				#<---
+terzadose_tot = lombardia_vaccini['dose_aggiuntiva'].sum() + lombardia_vaccini['dose_booster'].sum()		#<---
 
 #
 ##
@@ -90,6 +91,7 @@ story_dict['terapie_story'] += [float(terapie_attuali)]
 story_dict['deceduti_story'] += [float(deceduti_oggi)]
 story_dict['primadose_story'] += [float(primadose_tot)]
 story_dict['secondadose_story'] += [float(secondadose_tot)]
+story_dict['terzadose_story'] += [float(terzadose_tot)]
 story_dict['data'] = str(oggi_slash)
 
 with open('credentials.json', 'r') as credentials_file:

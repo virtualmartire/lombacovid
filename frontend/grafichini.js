@@ -87,7 +87,7 @@ function curve(values, colors, titles, y_label, element_id, with_mean = false, s
         options.vAxis.title = y_label;
     }
     if (with_mean == true || values.length == 2) {
-        options.series[0].lineDashStyle = [3, 3];
+        options.series[0].lineDashStyle = [15, 3];
         options.series[1] = { color: colors[1], lineDashStyle: [3, 0] };
         options.legend.position = 'top';
     }
