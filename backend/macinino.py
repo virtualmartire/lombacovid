@@ -3,7 +3,6 @@
 import pandas as pd
 import numpy as np
 import datetime
-import os
 import json
 import urllib.request
 import ftplib
@@ -77,7 +76,7 @@ lombardia_vaccini_janssen_tot = lombardia_vaccini_janssen['prima_dose'].sum()
 #
 primadose_tot = lombardia_vaccini['prima_dose'].sum() - lombardia_vaccini_janssen_tot					#<---
 secondadose_tot = lombardia_vaccini['seconda_dose'].sum() + lombardia_vaccini_janssen_tot				#<---
-terzadose_tot = lombardia_vaccini['dose_aggiuntiva'].sum() + lombardia_vaccini['dose_booster'].sum()		#<---
+terzadose_tot = lombardia_vaccini['dose_addizionale_booster'].sum()										#<---
 
 #
 ##
