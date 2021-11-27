@@ -15,17 +15,19 @@ print()
 ##
 #
 
+oggi_dash = datetime.date.today().strftime('%Y-%m-%d')
+oggi_slash = datetime.date.today().strftime('%d/%m/%Y')
+yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
+
 # Carico l'ultimo dataset disponibile
 present = pd.read_csv('https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-latest.csv')
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
 
 # Verifico che l'ultimo dataset disponibile sia quello di oggi
-oggi_dash = datetime.date.today().strftime('%Y-%m-%d')
 ultimo_aggiornamento = lombardia_present['data'].values[0][:10]
 if oggi_dash != ultimo_aggiornamento:
 	exit("File smarmellati. Ciao!")
 # e che il sito non sia già stato aggiornato
-oggi_slash = datetime.date.today().strftime('%d/%m/%Y')		# <---
 with urllib.request.urlopen('https://www.lombacovid.it/story.json') as story_file:
     story_dict = json.load(story_file)		# <---
 if oggi_slash == story_dict['data']:
@@ -34,7 +36,6 @@ if oggi_slash == story_dict['data']:
 print("Elaboro...")
 
 # Carico i restanti dataset: past e vaccini
-yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
 yesterday_url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-'+yesterday+'.csv'
 past = pd.read_csv(yesterday_url)
 lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
