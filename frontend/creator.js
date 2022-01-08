@@ -5,9 +5,10 @@ async function printNumbers() {
     try {
 
         const zone = document.getElementById("zona");
-        zone.style.background = "black";
+        /* const current_date = new Date().getDate(); */
+        zone.style.background = "#e6e600";
         zone.style.color = "white";
-        zone.innerHTML = "bianca";
+        zone.innerHTML = "gialla";
 
         const dati = await fetch("./story.json"); const dati_json = await dati.json();
 
