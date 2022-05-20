@@ -4,12 +4,6 @@ async function printNumbers() {
 
     try {
 
-        const zone = document.getElementById("zona");
-        /* const current_date = new Date().getDate(); */
-        zone.style.background = "#e6e600";
-        zone.style.color = "white";
-        zone.innerHTML = "gialla";
-
         const dati = await fetch("./story.json"); const dati_json = await dati.json();
 
         document.getElementById("data").innerHTML = dati_json.data;

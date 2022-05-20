@@ -72,12 +72,12 @@ tot_deceduti_past = lombardia_past['deceduti'].values[0]
 deceduti_oggi = tot_deceduti_present - tot_deceduti_past						#<---
 
 #vaccinati
-lombardia_vaccini_janssen = lombardia_vaccini[ lombardia_vaccini['fornitore'] == 'Janssen' ]
-lombardia_vaccini_janssen_tot = lombardia_vaccini_janssen['prima_dose'].sum()
+lombardia_vaccini_janssen = lombardia_vaccini[ lombardia_vaccini['forn'] == 'Janssen' ]
+lombardia_vaccini_janssen_tot = lombardia_vaccini_janssen['d1'].sum()
 #
-primadose_tot = lombardia_vaccini['prima_dose'].sum() - lombardia_vaccini_janssen_tot					#<---
-secondadose_tot = lombardia_vaccini['seconda_dose'].sum() + lombardia_vaccini_janssen_tot				#<---
-terzadose_tot = lombardia_vaccini['dose_addizionale_booster'].sum()										#<---
+primadose_tot = lombardia_vaccini['d1'].sum() - lombardia_vaccini_janssen_tot					#<---
+secondadose_tot = lombardia_vaccini['d2'].sum() + lombardia_vaccini_janssen_tot					#<---
+terzadose_tot = lombardia_vaccini['db1'].sum()													#<---
 
 #
 ##
