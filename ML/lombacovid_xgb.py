@@ -1,21 +1,16 @@
 import pandas as pd
 import numpy as np
-import datetime
 from math import *
-import random
 import json
-from datetime import datetime
 from datetime import timedelta
 import matplotlib.pyplot as plt
 
 
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, max_error
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.metrics import median_absolute_error, mean_absolute_percentage_error
-from sklearn.model_selection import train_test_split
 
 from xgboost import XGBRegressor
 
-import matplotlib as mpl
 from pandas.plotting import register_matplotlib_converters
 import seaborn as sns
 register_matplotlib_converters()
@@ -57,7 +52,7 @@ def calc_error(y_test,y_pred):
     #maxE = max_error(y_pred,y_test)
     medianAbsEr = median_absolute_error(y_test,y_pred)
     
-    print('R2: {}'.format(R2))
+    print(f'R2: {R2}')
     print('Mean Sqarred Error: {}'.format(MSE))
     print('Root Mean Sqarred Error: {}'.format(RMSE))
     print('Mean Absolute Error: {}'.format(MAE))
@@ -68,7 +63,7 @@ def calc_error(y_test,y_pred):
 
 
 # lettura json
-f = open('lombacovid_data.json.json')
+f = open('ML/lombacovid_data.json.json')
 data = json.load(f)
 
 # creazione dizionario per creazione dataset covid
@@ -80,13 +75,13 @@ for key in data:
 
 dataz = {}
 for i in range(1,len(keys)):
-        dataz[keys[i]] = data[keys[i]]
+    dataz[keys[i]] = data[keys[i]]
 
 # for i in range(1,len(keys)):
 #     print(keys[i],len(data[keys[i]]))
 
-    
-# creazione database covid a 550 elementi (parte da 01/) 
+
+# creazione database covid a 550 elementi (parte da 01/01/21) 
 # -> tolgo i giorni con prima/seconda/terza dose pari a zero
 data_covid = pd.DataFrame()
 data_covid['rapporto_positivi_tamponi'] = pd.DataFrame(dataz['perc_story'])
