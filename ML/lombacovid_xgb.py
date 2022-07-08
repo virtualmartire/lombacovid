@@ -94,17 +94,15 @@ n = zero
 
 # creazione dataset "data_covid"
 data_covid.drop(index=data_covid.index[:n],inplace=True)
-data_covid.reset_index(inplace=True)
 data_covid['prima_dose']= data['primadose_story']
 data_covid['seconda_dose']= data['secondadose_story']
 data_covid['terza_dose']= data['terzadose_story']
-data_covid.drop('index',axis=1,inplace=True)
 data_covid['date'] = pd.date_range('2021-01-01', periods=550, freq='D')
 data_covid['date'] = pd.to_datetime(data_covid['date'])
 data_covid.set_index('date',inplace=True)
 
 print('dataset usato:')
-display(data_covid.head())
+print(data_covid.head())
 
 
 # xgboost time series forecasting with prima,seconda,terza dose
