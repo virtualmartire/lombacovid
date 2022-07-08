@@ -105,23 +105,51 @@ print(data_covid.head(14))
 x = data_covid.drop(columns='ospedalizzati_story')
 y = data_covid['ospedalizzati_story']
 
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.85, test_size=0.15,random_state=10)
+
+
 # creazione modello su tutto dataset (x & y)
 xgb_reg_final = XGBRegressor(
         n_estimators=200, 
         max_depth=6, 
         learning_rate=0.1,
         random_state = 42,
-        n_jobs = 3).fit(x,y)
+        n_jobs = 3).fit(x_train,y_train)
 
-# predizione di 7 giorni
-y_next_days = xgb_reg_final.predict(df_future_prediction)
-df_next_days = pd.DataFrame(y_next_days).set_index(df_future_prediction.index+timedelta(days=7))
 
-# grafico predizioni della validation e validation
-plt.plot(df_next_days,'r',markersize=9,label = 'predicted next 7 days')
-plt.show()
-plt.plot(data_covid.ospedalizzati,label='ospedalizzati ts')
-plt.plot(df_next_days,'r',markersize=9,label = 'predicted next 7 days')
-plt.legend()
-plt.title('Ospedalizzati next 7 days')
-plt.show()
+# test dataframe
+y_pred = xgb_reg_final.predict(x_test)
+
+calc_error(y_test,y_pred)
+
+
+
+# # plot y_test
+# plt.rc("figure", figsize=(16, 10),dpi=100)
+
+# plt.plot(y_test.reset_index()['ospedalzizati_story'],'yo',label='test')
+# plt.plot()
+# plt.plot(y_pred,'r+',markersize=12,label='pred')
+# plt.legend()
+# plt.title('Test set')
+# plt.show()
+
+
+
+mean_train = np.mean(y_train)   # calcolo media train 
+baseline_predictions = np.ones(y_test.shape) * mean_train  # creo vettore lungo y_test con elementi = media train
+mse_baseline = sqrt(mean_squared_error(y_test,baseline_predictions)) # calcolo errore su vettore media e y_test
+print("\nBaseline median RMSE is {:.2f}".format(mse_baseline))
+
+# # predizione di 7 giorni
+# y_next_days = xgb_reg_final.predict(df_future_prediction)
+# df_next_days = pd.DataFrame(y_next_days).set_index(df_future_prediction.index+timedelta(days=7))
+
+# # grafico predizioni della validation e validation
+# plt.plot(df_next_days,'r',markersize=9,label = 'predicted next 7 days')
+# plt.show()
+# plt.plot(data_covid.ospedalizzati,label='ospedalizzati ts')
+# plt.plot(df_next_days,'r',markersize=9,label = 'predicted next 7 days')
+# plt.legend()
+# plt.title('Ospedalizzati next 7 days')
+# plt.show()
