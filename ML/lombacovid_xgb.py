@@ -90,10 +90,11 @@ data_covid['ospedalizzati'] = pd.DataFrame(dataz['ospedalizzati_story'])
 
 # numero di giorni da togliere per prima/seconda/terza dose pari a 0
 zero = len(data_covid['rapporto_positivi_tamponi']) - len(dataz['terzadose_story'])
-n = zero 
+n = np.zeros(zero) 
 
 # creazione dataset "data_covid"
-data_covid.drop(index=data_covid.index[:n],inplace=True)
+# data_covid.drop(index=data_covid.index[:n],inplace=True)
+
 data_covid['prima_dose']= data['primadose_story']
 data_covid['seconda_dose']= data['secondadose_story']
 data_covid['terza_dose']= data['terzadose_story']
