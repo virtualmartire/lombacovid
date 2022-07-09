@@ -83,27 +83,31 @@ dataframe.drop(columns='data', inplace=True)
 dataframe.drop(columns='terapie_story', inplace=True)
 dataframe.drop(columns='deceduti_story', inplace=True)
 
-dataframe.rename(columns = {'ospedalizzati_story':'ospedalizzati_oggi'}, inplace = True)
+dataframe.rename(columns = {'ospedalizzati_story':'ospedalizzati_oggi',
+                            'perc_story':'perc_oggi'},
+                            inplace = True)
 
 dataframe['date'] = pd.date_range('2020-09-01', periods=max_len, freq='D')
 dataframe['date'] = pd.to_datetime(dataframe['date'])
 dataframe.set_index('date',inplace=True)
 
-print(dataframe.head(10))
-
 # feature engineering
 
+running_average = 4     # <---
+
+dataframe['perc_oggi'] = dataframe['perc_oggi'].rolling(window=running_average).mean()
+dataframe.dropna()
+
 past_days = 7           # <---
-future_target = 7       # <---
+future_target = 4       # <---
 
 for i in range(1, past_days):
     dataframe[f'ospedalizzati_past{i}'] = dataframe['ospedalizzati_oggi'].shift(i).dropna()
+    dataframe[f'perc_past{i}'] = dataframe['perc_oggi'].shift(i).dropna()
 
 dataframe['ospedalizzati_target'] = dataframe['ospedalizzati_oggi'].shift(-future_target).dropna()
 
 timeserieFeatureExtractor(dataframe)
-
-print(dataframe.head(10))
 
 #
 ##
