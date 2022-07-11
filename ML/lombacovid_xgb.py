@@ -42,7 +42,7 @@ def timeserieFeatureExtractor(timeseries):
     return 
 
 def calcError(y_test, y_pred):
-
+    
     R2 = r2_score(y_test, y_pred)
     MSE = mean_squared_error(y_test, y_pred)
     RMSE = sqrt(MSE)
@@ -50,9 +50,9 @@ def calcError(y_test, y_pred):
     MAPE = mean_absolute_percentage_error(y_test, y_pred)
     medianAbsEr = median_absolute_error(y_test, y_pred)
     
-    #print(f'R2: {R2}')
-    #print(f'Mean Squared Error: {MSE}')
-    #print(f'Root Mean Sqarred Error: {RMSE}')
+    print(f'R2: {R2}')
+    print(f'Mean Squared Error: {MSE}')
+    print(f'Root Mean Sqarred Error: {RMSE}')
     print(f'Mean Absolute Error: {MAE}')
     print(f'Mean Absolute Percentage Error: {MAPE}')
     #print(f'Median Absolute Error: {medianAbsEr}')
@@ -160,6 +160,16 @@ y_pred = model.predict(x_test)
 
 print("Error on test data:")
 calcError(y_test, y_pred)
+
+
+### PLOT TRAIN VS TEST
+
+plt.plot(y_pred,'b+',label='prediction')
+plt.plot(y_test.reset_index(drop=True),'yo',label='test')
+plt.legend()
+plt.title('Train vs Test')
+plt.show()
+
 
 # test grafico
 
