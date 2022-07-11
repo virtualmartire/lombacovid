@@ -15,11 +15,6 @@ sns.set_style("whitegrid")
 plt.rc("figure", figsize=(17, 10),dpi=100)
 plt.rc("font", size=14)
 
-import tensorflow as tf
-from tensorflow.keras.layers import Input, GRU, Dense
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
-
-
 #
 ##
 ### FUNZIONI VARIE
@@ -37,7 +32,7 @@ def timeserieFeatureExtractor(timeseries):
     #timeseries['weekofyear'] = timeseries.index.weekofyear
     #timeseries['daysinmonth'] = timeseries.index.daysinmonth
     timeseries['weekend'] = np.where(timeseries.index.dayofweek > 4, 1, 0)
-    timeseries.fillna(0, inplace=True)
+    timeseries.fillna(0,inplace=True)
 
     return 
 
@@ -94,40 +89,25 @@ dataframe.rename(columns = {'ospedalizzati_story':'ospedalizzati_oggi',
 
 dataframe['date'] = pd.date_range('2020-09-01', periods=max_len, freq='D')
 dataframe['date'] = pd.to_datetime(dataframe['date'])
-dataframe.set_index('date', inplace=True)
+dataframe.set_index('date',inplace=True)
 
 # feature engineering
 
-perc_running_average = 4     # <---
-dataframe['perc_oggi'] = dataframe['perc_oggi'].rolling(window=perc_running_average).mean()
-dataframe = dataframe.dropna()
+running_average = 4     # <---
+
+dataframe['perc_oggi'] = dataframe['perc_oggi'].rolling(window=running_average).mean()
+dataframe.dropna()
+
+past_days = 7           # <---
+future_target = 4       # <---
+
+for i in range(1, past_days):
+    dataframe[f'ospedalizzati_past{i}'] = dataframe['ospedalizzati_oggi'].shift(i).dropna()
+    dataframe[f'perc_past{i}'] = dataframe['perc_oggi'].shift(i).dropna()
+
+dataframe['ospedalizzati_target'] = dataframe['ospedalizzati_oggi'].shift(-future_target).dropna()
 
 timeserieFeatureExtractor(dataframe)
-
-window = 7                # <---
-x = []
-for i in range(window+1, len(dataframe)-window+1):
-	a = dataframe[i-window:i]
-	x.append(a)
-y = dataframe['ospedalizzati_oggi'].shift(-2*window)
-x = np.array(x)
-y = y.dropna().to_numpy()
-
-#
-##
-### MODEL
-##
-#
-
-model = tf.keras.models.Sequential([Input(shape=(x.shape[1], x.shape[2])),
-                                    GRU(units=8, activation='tanh', return_sequences=True),
-                                    GRU(units=4, activation='tanh', return_sequences=True),
-                                    GRU(units=4, activation='tanh', return_sequences=False),
-                                    Dense(4, activation='tanh'),
-                                    Dense(1, activation='linear')])
-
-optimizer = tf.keras.optimizers.Adam(learning_rate=1.0)
-model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
 
 #
 ##
@@ -135,18 +115,17 @@ model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
 ##
 #
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.85, test_size=0.15, shuffle=True)
+x = dataframe.drop(columns='ospedalizzati_target')
+y = dataframe['ospedalizzati_target']
 
-model.fit(x_train, y_train, epochs=1000, batch_size=256, validation_data=(x_test, y_test),
-        callbacks=[ModelCheckpoint(filepath="ML/weights/best_weights.hdf5",
-                                    save_best_only=True,
-                                    monitor='val_loss',
-                                    mode='min',
-                                    save_weights_only=True),
-                    ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=50,
-                                    verbose=1, mode='min', min_delta=10,
-                                    cooldown=0, min_lr=0)])
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.85, test_size=0.15, random_state=10)
 
+model = XGBRegressor(
+        n_estimators=200, 
+        max_depth=6, 
+        learning_rate=0.1,
+        random_state = 42,
+        n_jobs = 3).fit(x_train, y_train)
 
 #
 ##
