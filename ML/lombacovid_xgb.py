@@ -170,3 +170,8 @@ plt.show()
 
 
 # FETURE IMPORTANCE XGB -> per eliminare variabili inutili 
+plt.rc("figure", figsize=(17, 10),dpi=100)
+sorted_idx = model.feature_importances_.argsort()
+plt.title('Feature importance XGB')
+plt.barh(x.columns[sorted_idx], model.feature_importances_[sorted_idx])
+plt.show()
