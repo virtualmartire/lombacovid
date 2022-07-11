@@ -5,15 +5,7 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.metrics import median_absolute_error, mean_absolute_percentage_error
-from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
-from pandas.plotting import register_matplotlib_converters
-
-import seaborn as sns
-register_matplotlib_converters()
-sns.set_style("whitegrid")
-plt.rc("figure", figsize=(17, 10),dpi=100)
-plt.rc("font", size=14)
 
 #
 ##
@@ -50,7 +42,6 @@ def calcError(y_test, y_pred):
     print(f'Root Mean Sqarred Error: {RMSE}')
     print(f'Mean Absolute Error: {MAE}')
     print(f'Mean Absolute Percentage Error: {MAPE}')
-    #print(f'Median Absolute Error: {medianAbsEr}')
 
     return
 
@@ -94,18 +85,18 @@ dataframe.set_index('date',inplace=True)
 # feature engineering
 
 running_average = 4     # <---
-
 dataframe['perc_oggi'] = dataframe['perc_oggi'].rolling(window=running_average).mean()
-dataframe.dropna()
+dataframe = dataframe.dropna()
 
 past_days = 7           # <---
-future_target = 7       # <---
-
 for i in range(1, past_days):
     dataframe[f'ospedalizzati_past{i}'] = dataframe['ospedalizzati_oggi'].shift(i).dropna()
     dataframe[f'perc_past{i}'] = dataframe['perc_oggi'].shift(i).dropna()
+dataframe = dataframe.dropna()
 
+future_target = 7       # <---
 dataframe['ospedalizzati_target'] = dataframe['ospedalizzati_oggi'].shift(-future_target).dropna()
+dataframe = dataframe.dropna()
 
 timeserieFeatureExtractor(dataframe)
 
@@ -118,14 +109,18 @@ timeserieFeatureExtractor(dataframe)
 x = dataframe.drop(columns='ospedalizzati_target')
 y = dataframe['ospedalizzati_target']
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.85, test_size=0.15, random_state=10)
+x_train, x_test, y_train, y_test = x[:-7], x[-7:], y[:-7], y[-7:]
 
 model = XGBRegressor(
         n_estimators=200, 
-        max_depth=6, 
-        learning_rate=0.1,
         random_state = 42,
-        n_jobs = 3).fit(x_train, y_train)
+        n_jobs = 3,
+        colsample_bytree=0.5,
+        subsample=0.5,
+        max_depth=3,
+        gamma=1e5,
+        eta=1e-1,
+        min_child_weight=1.0).fit(x_train, y_train)
 
 #
 ##
@@ -137,46 +132,25 @@ y_pred = model.predict(x_test)
 
 # calcolo degli errori
 
-print("Error on test data:")
+print("\nError on test data:")
 calcError(y_test, y_pred)
 
-
-### PLOT TRAIN VS TEST
-
-plt.plot(y_pred,'b+',label='prediction')
-plt.plot(y_test.reset_index(drop=True),'yo',label='test')
-plt.legend()
-plt.title('Train vs Test')
-plt.show()
-
+print("\nError on train data:")
+calcError(y_train, model.predict(x_train))
 
 # test grafico
-len_test = 20
-len_pred = future_target   # 7 days
 
-test_interval = dataframe.tail(len_test)
+y_pred = pd.DataFrame(y_pred, index=y_test.index)
 
-fixed_interval = test_interval.head(len_test-len_pred)['ospedalizzati_oggi']
-true_final = test_interval.tail(len_pred)['ospedalizzati_oggi']
-pred_final = model.predict(test_interval.head(len_test-len_pred).drop(columns='ospedalizzati_target').tail(len_pred))
-
-pred_final = pd.DataFrame(pred_final, index=true_final.index)
-
-plt.plot(fixed_interval,label='test interval')
-plt.plot(true_final, label='ground truth')
-plt.plot(pred_final, label = 'prediction')
+plt.plot(y_train[-10:],label='test interval')
+plt.plot(y_test, label='ground truth')
+plt.plot(y_pred, label = 'prediction')
 plt.legend()
 plt.show()
 
+# feature importance
 
-# FETURE IMPORTANCE XGB -> per eliminare variabili inutili 
-plt.rc("figure", figsize=(17, 10),dpi=100)
 sorted_idx = model.feature_importances_.argsort()
 plt.title('Feature importance XGB')
 plt.barh(x.columns[sorted_idx], model.feature_importances_[sorted_idx])
-plt.show()
-
-
-# Problemone: il modello fa previsioni fino alla data del dataframe, poi va a zero improvvisamente
-plt.plot(model.predict(test_interval.drop(columns='ospedalizzati_target')))
 plt.show()
