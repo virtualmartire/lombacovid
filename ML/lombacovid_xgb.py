@@ -99,7 +99,7 @@ dataframe['perc_oggi'] = dataframe['perc_oggi'].rolling(window=running_average).
 dataframe.dropna()
 
 past_days = 7           # <---
-future_target = 4       # <---
+future_target = 7       # <---
 
 for i in range(1, past_days):
     dataframe[f'ospedalizzati_past{i}'] = dataframe['ospedalizzati_oggi'].shift(i).dropna()
@@ -151,31 +151,22 @@ plt.show()
 
 
 # test grafico
+len_test = 20
+len_pred = future_target   # 7 days
 
-test_interval = dataframe.tail(30)
+test_interval = dataframe.tail(len_test)
 
-fixed_interval = test_interval.head(16)['ospedalizzati_oggi']
-true_final = test_interval.tail(14)['ospedalizzati_oggi']
-pred_final = model.predict(test_interval.head(16).drop(columns='ospedalizzati_target').tail(14))
+fixed_interval = test_interval.head(len_test-len_pred)['ospedalizzati_oggi']
+true_final = test_interval.tail(len_pred)['ospedalizzati_oggi']
+pred_final = model.predict(test_interval.head(len_test-len_pred).drop(columns='ospedalizzati_target').tail(len_pred))
 
 pred_final = pd.DataFrame(pred_final, index=true_final.index)
 
-plt.plot(fixed_interval)
+plt.plot(fixed_interval,label='test interval')
 plt.plot(true_final, label='ground truth')
 plt.plot(pred_final, label = 'prediction')
 plt.legend()
 plt.show()
 
-# # plot y_test
-# plt.rc("figure", figsize=(16, 10),dpi=100)
-# plt.plot(y_test.reset_index()['ospedalizzati_target'], 'yo', label='test')
-# plt.plot()
-# plt.plot(y_pred, 'r+', markersize=12, label='pred')
-# plt.legend()
-# plt.title('Test set')
-# plt.show()
 
-# mean_train = np.mean(y_train)   # calcolo media train 
-# baseline_predictions = np.ones(y_test.shape) * mean_train  # creo vettore lungo y_test con elementi = media train
-# mse_baseline = sqrt(mean_squared_error(y_test,baseline_predictions)) # calcolo errore su vettore media e y_test
-# print("\nBaseline median RMSE is {:.2f}".format(mse_baseline))
+# FETURE IMPORTANCE XGB -> per eliminare variabili inutili 
