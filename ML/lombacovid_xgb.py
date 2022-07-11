@@ -175,3 +175,8 @@ sorted_idx = model.feature_importances_.argsort()
 plt.title('Feature importance XGB')
 plt.barh(x.columns[sorted_idx], model.feature_importances_[sorted_idx])
 plt.show()
+
+
+# Problemone: il modello fa previsioni fino alla data del dataframe, poi va a zero improvvisamente
+plt.plot(model.predict(test_interval.drop(columns='ospedalizzati_target')))
+plt.show()
