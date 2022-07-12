@@ -151,8 +151,11 @@ plt.show()
 # predizione di 7 giorni -> dovrebbero aumentare progressivamente; i valori più lontani sono meno precisi
 prediction = model.predict(dataframe.tail(future_target).drop(columns='ospedalizzati_target'))
 print('\nprevisione :',prediction)
+index_pred = pd.date_range(dataframe.index[-1],periods=future_target)
+prediction = pd.DataFrame(prediction,index = index_pred)
 plt.plot(prediction)    
 plt.title('predizione future')
+plt.plot(dataframe[dataframe.index>'2022-06-01'].ospedalizzati_oggi)
 plt.show()
 
 
