@@ -5,6 +5,7 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.metrics import median_absolute_error, mean_absolute_percentage_error
+from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 
 #
@@ -100,50 +101,55 @@ dataframe = dataframe.dropna()
 
 timeserieFeatureExtractor(dataframe)
 
+dataframe.drop(columns=['primadose_story','secondadose_story','terzadose_story'], inplace=True)
+
 #
 ##
-### FITTING
+### TRAIN
 ##
 #
 
 x = dataframe.drop(columns='ospedalizzati_target')
 y = dataframe['ospedalizzati_target']
 
-x_train, x_test, y_train, y_test = x[:-7], x[-7:], y[:-7], y[-7:]
+split_val, split_test = 3, 3
+
+x_train, y_train = x[:-(split_val+split_test)], y[:-(split_val+split_test)]
+x_val, y_val = x[-(split_val+split_test):-split_test], y[-(split_val+split_test):-split_test]
+x_test, y_test = x[-split_test:], y[-split_test:]
 
 model = XGBRegressor(
-        n_estimators=200, 
+        n_estimators=100, 
         random_state = 42,
         n_jobs = 3,
-        colsample_bytree=0.5,
+        colsample_bytree=0.4,
         subsample=0.5,
-        max_depth=3,
+        max_depth=7,
         gamma=1e5,
         eta=1e-1,
         min_child_weight=1.0).fit(x_train, y_train)
 
 #
 ##
-### TESTING
+### VALIDATE
 ##
 #
 
-y_pred = model.predict(x_test)
+y_pred = model.predict(x_val)
 
 # calcolo degli errori
 
-print("\nError on test data:")
-calcError(y_test, y_pred)
+print("\nError on validation data:")
+calcError(y_val, y_pred)
 
 print("\nError on train data:")
 calcError(y_train, model.predict(x_train))
 
 # test grafico
 
-y_pred = pd.DataFrame(y_pred, index=y_test.index)
+y_pred = pd.DataFrame(y_pred, index=y_val.index)
 
-plt.plot(y_train[-10:],label='test interval')
-plt.plot(y_test, label='ground truth')
+plt.plot(y_val, label='ground truth')
 plt.plot(y_pred, label = 'prediction')
 plt.legend()
 plt.show()
@@ -153,4 +159,19 @@ plt.show()
 sorted_idx = model.feature_importances_.argsort()
 plt.title('Feature importance XGB')
 plt.barh(x.columns[sorted_idx], model.feature_importances_[sorted_idx])
+plt.show()
+
+#
+##
+### TEST
+##
+#
+
+# test grafico
+
+y_pred = pd.DataFrame(model.predict(x_test), index=y_test.index)
+
+plt.plot(y_test, label='ground truth')
+plt.plot(y_pred, label = 'prediction')
+plt.legend()
 plt.show()
