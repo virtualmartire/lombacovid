@@ -113,16 +113,19 @@ dataframe.drop(columns=['primadose_story','secondadose_story','terzadose_story']
 x = dataframe.head(-future_target).drop(columns='ospedalizzati_target')
 y = dataframe.head(-future_target)['ospedalizzati_target']
 
+
 model = XGBRegressor(
-        n_estimators=200, 
-        random_state = 42,
-        n_jobs = 3,
-        colsample_bytree=0.5,
+        n_estimators=356, 
+        eta=0.1,
+        n_jobs = -1,
+        colsample_bytree=1,
+        min_child_weight=1.0,
         subsample=0.5,
-        max_depth=3,
-        gamma=1e5,
-        eta=1e-1,
-        min_child_weight=1.0).fit(x,y)
+        max_depth=4,
+        gamma=0.45,
+        reg_alpha = 0.1,
+        reg_lambda = 2.5,
+        random_state = 42).fit(x,y)
 
 #
 ##
