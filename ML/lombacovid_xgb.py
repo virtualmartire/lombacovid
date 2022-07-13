@@ -1,3 +1,4 @@
+from turtle import color
 import pandas as pd
 import numpy as np
 from math import *
@@ -43,6 +44,23 @@ def calcError(y_test, y_pred):
     print(f'Root Mean Sqarred Error: {RMSE}')
     print(f'Mean Absolute Error: {MAE}')
     print(f'Mean Absolute Percentage Error: {MAPE}')
+
+    return
+
+def plot_test(y_test, y_pred, perc_error):
+    
+    y_pred_1 = y_pred.head(1)
+    y_pred_2 = y_pred.tail(1)
+
+    y_pred_a = y_pred_2 * (1+perc_error)
+    y_pred_b = y_pred_2 * (1-perc_error)
+    y_pred_up = pd.concat([y_pred_1, y_pred_a])
+    y_pred_down = pd.concat([y_pred_1, y_pred_b])
+
+    plt.plot(y_test, label = "ground truth", color="green")
+    plt.fill_between(y_pred_up.index, y_pred_up.to_numpy()[:,0], y_pred_down.to_numpy()[:,0], color="orange", alpha=0.3)
+    plt.legend()
+    plt.show()
 
     return
 
@@ -112,7 +130,7 @@ dataframe.drop(columns=['primadose_story','secondadose_story','terzadose_story']
 x = dataframe.drop(columns='ospedalizzati_target')
 y = dataframe['ospedalizzati_target']
 
-split_val, split_test = 3, 3
+split_val, split_test = 10, 5
 
 x_train, y_train = x[:-(split_val+split_test)], y[:-(split_val+split_test)]
 x_val, y_val = x[-(split_val+split_test):-split_test], y[-(split_val+split_test):-split_test]
@@ -135,7 +153,9 @@ model = XGBRegressor(
 ##
 #
 
-y_pred = model.predict(x_val)
+perc_error = 0.07        # <---
+
+y_pred = pd.DataFrame(model.predict(x_val), index=y_val.index)
 
 # calcolo degli errori
 
@@ -147,12 +167,7 @@ calcError(y_train, model.predict(x_train))
 
 # test grafico
 
-y_pred = pd.DataFrame(y_pred, index=y_val.index)
-
-plt.plot(y_val, label='ground truth')
-plt.plot(y_pred, label = 'prediction')
-plt.legend()
-plt.show()
+plot_test(y_val, y_pred, perc_error)
 
 # feature importance
 
@@ -167,11 +182,13 @@ plt.show()
 ##
 #
 
-# test grafico
-
 y_pred = pd.DataFrame(model.predict(x_test), index=y_test.index)
 
-plt.plot(y_test, label='ground truth')
-plt.plot(y_pred, label = 'prediction')
-plt.legend()
-plt.show()
+# calcolo degli errori
+
+print("\nError on test data:")
+calcError(y_test, y_pred)
+
+# test grafico
+
+plot_test(y_test, y_pred, perc_error)
