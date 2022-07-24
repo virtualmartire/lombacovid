@@ -10,7 +10,7 @@ async function csvToDict(csvString) {
         csv_dict[key] = [];
     }
 
-    while (csv_array.length) {
+    while (csv_array.length - 1) {      // -1 to skip last empty line
 
         var row_array_strings = csv_array.shift().split(',');
         var row_array = row_array_strings.slice(0, 1).concat(row_array_strings.slice(1).map(Number));
