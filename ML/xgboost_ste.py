@@ -70,26 +70,10 @@ def plot_test(y_test, y_pred, perc_error):
 ##
 #
 
-# lettura json
+# recupero del dataset remoto e aggiornato
 
-f = open('ML/lombacovid_data.json.json')
-data_dict = json.load(f)
+dataframe = pd.read_csv('https://www.lombacovid.it/story.csv')
 
-# riempimento colonne
-
-max_len = len(data_dict['perc_story'])
-min_len = len(data_dict['primadose_story'])
-zeros_tofill = list(np.zeros(max_len - min_len))
-
-data_dict['primadose_story'] = zeros_tofill + data_dict['primadose_story']
-data_dict['secondadose_story'] = zeros_tofill + data_dict['secondadose_story']
-data_dict['terzadose_story'] = zeros_tofill + data_dict['terzadose_story']
-
-# creazione dataframe
-
-dataframe = pd.DataFrame.from_dict(data_dict)
-
-dataframe.drop(columns='data', inplace=True)
 dataframe.drop(columns='terapie_story', inplace=True)
 dataframe.drop(columns='deceduti_story', inplace=True)
 
@@ -97,9 +81,8 @@ dataframe.rename(columns = {'ospedalizzati_story':'ospedalizzati_oggi',
                             'perc_story':'perc_oggi'},
                             inplace = True)
 
-dataframe['date'] = pd.date_range('2020-09-01', periods=max_len, freq='D')
-dataframe['date'] = pd.to_datetime(dataframe['date'])
-dataframe.set_index('date',inplace=True)
+dataframe['data'] = pd.to_datetime(dataframe['data'])
+dataframe.set_index('data', inplace=True)
 
 # feature engineering
 
