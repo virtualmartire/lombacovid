@@ -1,10 +1,9 @@
-"""Prende da GitHub i dati di ieri, di oggi e dei vaccini per calcolare ed esportare un po' di situazioni."""
+"""Prende da GitHub i dati di ieri e di oggi per calcolare ed esportare un po' di situazioni."""
 
 import pandas as pd
 import numpy as np
 import datetime
 import json
-import urllib.request
 import ftplib
 
 print()
@@ -28,9 +27,8 @@ ultimo_aggiornamento = lombardia_present['data'].values[0][:10]
 if oggi_dash != ultimo_aggiornamento:
 	exit("File smarmellati. Ciao!")
 # e che il sito non sia già stato aggiornato
-with urllib.request.urlopen('https://www.lombacovid.it/story.json') as story_file:
-    story_dict = json.load(story_file)		# <---
-if oggi_slash == story_dict['data']:
+story_csv = pd.read_csv('https://www.lombacovid.it/story.csv')		# <---
+if oggi_slash == story_csv['data'].values[-1]:
 	exit("Sito già aggiornato!")
 
 print("Elaboro...")
@@ -85,27 +83,26 @@ terzadose_tot = lombardia_vaccini['db1'].sum()													#<---
 ##
 #
 
-story_dict['perc_story'] += [float(percentuale)]						#è una python list
-story_dict['ospedalizzati_story'] += [float(ospedalizzati_attuali)]
-story_dict['terapie_story'] += [float(terapie_attuali)]
-story_dict['deceduti_story'] += [float(deceduti_oggi)]
-story_dict['primadose_story'] += [float(primadose_tot)]
-story_dict['secondadose_story'] += [float(secondadose_tot)]
-story_dict['terzadose_story'] += [float(terzadose_tot)]
-story_dict['data'] = str(oggi_slash)
+nuova_riga = pd.DataFrame([[str(oggi_slash),
+							float(percentuale),
+							float(ospedalizzati_attuali),
+							float(terapie_attuali),
+							float(deceduti_oggi),
+							float(primadose_tot),
+							float(secondadose_tot),
+							float(terzadose_tot)]],
+
+							columns=story_csv.columns.tolist())
+
+story_csv = pd.concat([story_csv, nuova_riga])
+story_csv.set_index('data', inplace=True)
+story_csv.to_csv('frontend/story.csv')
 
 with open('credentials.json', 'r') as credentials_file:
 	credentials_dict = json.load(credentials_file)
-user = credentials_dict['id']
-password = credentials_dict['password']
-
-session = ftplib.FTP('ftp.lombacovid.it', user, password)
-
-with open('frontend/story.json', 'w') as story_file:
-	json.dump(story_dict, story_file)
-
-with open('frontend/story.json', 'rb') as story_file:
-    session.storbinary('STOR www.lombacovid.it/story.json', story_file)
+session = ftplib.FTP('ftp.lombacovid.it', credentials_dict['id'], credentials_dict['password'])
+with open('frontend/story.csv', 'rb') as story_file:
+    session.storbinary('STOR www.lombacovid.it/story.csv', story_file)
 
 session.quit()
 
