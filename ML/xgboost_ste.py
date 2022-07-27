@@ -81,8 +81,11 @@ dataframe.rename(columns = {'ospedalizzati_story':'ospedalizzati_oggi',
                             'perc_story':'perc_oggi'},
                             inplace = True)
 
-dataframe['data'] = pd.to_datetime(dataframe['data'])
-dataframe.set_index('data', inplace=True)
+# replace date
+dataframe['new_date'] = pd.date_range(start='2020-09-01', periods=len(dataframe))
+dataframe['new_date'] = pd.to_datetime(dataframe['new_date'])
+dataframe.drop(columns='data', inplace=True)
+dataframe.set_index('new_date',inplace=True)
 
 # feature engineering
 
@@ -113,22 +116,36 @@ dataframe.drop(columns=['primadose_story','secondadose_story','terzadose_story']
 x = dataframe.drop(columns='ospedalizzati_target')
 y = dataframe['ospedalizzati_target']
 
-split_val, split_test = 10, 5
+split_val, split_test = 5, 15
 
 x_train, y_train = x[:-(split_val+split_test)], y[:-(split_val+split_test)]
 x_val, y_val = x[-(split_val+split_test):-split_test], y[-(split_val+split_test):-split_test]
 x_test, y_test = x[-split_test:], y[-split_test:]
 
+# model = XGBRegressor(
+#         n_estimators=100, 
+#         random_state = 42,
+#         n_jobs = 3,
+#         colsample_bytree=0.4,
+#         subsample=0.5,
+#         max_depth=7,
+#         gamma=1e5,
+#         eta=1e-1,
+#         min_child_weight=1.0).fit(x_train, y_train)
+
+
 model = XGBRegressor(
-        n_estimators=100, 
-        random_state = 42,
-        n_jobs = 3,
-        colsample_bytree=0.4,
-        subsample=0.5,
-        max_depth=7,
-        gamma=1e5,
-        eta=1e-1,
-        min_child_weight=1.0).fit(x_train, y_train)
+            n_estimators=356, 
+            eta=0.1,
+            n_jobs = -1,
+            colsample_bytree=1,
+            min_child_weight=1.0,
+            subsample=0.5,
+            max_depth=4,
+            gamma=0.45,
+            reg_alpha = 0.1,
+            reg_lambda = 2.5,
+            random_state = 42).fit(x_train, y_train)
 
 #
 ##
