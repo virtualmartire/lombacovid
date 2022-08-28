@@ -76,6 +76,7 @@ lombardia_vaccini_janssen_tot = lombardia_vaccini_janssen['d1'].sum()
 primadose_tot = lombardia_vaccini['d1'].sum() - lombardia_vaccini_janssen_tot					#<---
 secondadose_tot = lombardia_vaccini['d2'].sum() + lombardia_vaccini_janssen_tot					#<---
 terzadose_tot = lombardia_vaccini['db1'].sum()													#<---
+quartadose_tot = lombardia_vaccini['db2'].sum()													#<---
 
 #
 ##
@@ -90,7 +91,8 @@ nuova_riga = pd.DataFrame([[str(oggi_slash),
 							float(deceduti_oggi),
 							float(primadose_tot),
 							float(secondadose_tot),
-							float(terzadose_tot)]],
+							float(terzadose_tot),
+							float(quartadose_tot)]],
 
 							columns=story_csv.columns.tolist())
 

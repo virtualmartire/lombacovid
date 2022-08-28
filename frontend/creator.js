@@ -45,17 +45,13 @@ async function printNumbers() {
         const popolazione_lombarda = 10060965;
         const popolazione_lombarda_over12 = popolazione_lombarda - 1051819;
 
-        const secondadose_perc = String((dati_dict.secondadose_story[dati_dict.secondadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
-        document.getElementById("secondedosi").style.width = secondadose_perc;
-        document.getElementById("secondedosi").innerHTML = secondadose_perc;
-
-        const secondadose_perc_12anni = String((dati_dict.secondadose_story[dati_dict.secondadose_story.length-1] / popolazione_lombarda_over12 * 100).toFixed(2))+"%";
-        document.getElementById("secondedosi_12anni").style.width = secondadose_perc_12anni;
-        document.getElementById("secondedosi_12anni").innerHTML = secondadose_perc_12anni;
-
         const terzadose_perc = String((dati_dict.terzadose_story[dati_dict.terzadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
         document.getElementById("terzedosi").style.width = terzadose_perc;
         document.getElementById("terzedosi").innerHTML = terzadose_perc;
+
+        const quartadose_perc = String((dati_dict.quartadose_story[dati_dict.quartadose_story.length-1] / popolazione_lombarda * 100).toFixed(2))+"%";
+        document.getElementById("quartedosi").style.width = quartadose_perc;
+        document.getElementById("quartedosi").innerHTML = quartadose_perc;
 
     } catch(error) {
         console.error(error);
@@ -71,41 +67,46 @@ async function drawCharts() {
         const dati_csv = await dati.text();
         const dati_dict = await csvToDict(dati_csv);
 
+        const date1 = new Date(2020, 8, 1);            // months are 0-indexed
+        const date2 = new Date(2021, 8, 1);
+        const diffTime = Math.abs(date2 - date1);
+        const diffDays_index = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1;
+
         curve(  values = [dati_dict['perc_story']],
                 colors = ['#fcd2cf', '#f33a30'],
                 titles = ["valore assoluto", "media mobile"],
                 y_label = "rapporto = pos/tam",
                 element_id = "grafico_rapporto",
                 with_mean = true,
-                startDate = new Date(2020, 8, 1));            // months are 0-indexed
+                startDate = date1);
         curve(  [dati_dict['ospedalizzati_story']],
                 ['#f99726'],
                 ["valore assoluto"],
                 "ospedalizzati",
                 'grafico_ospedalizzati',
                 false,
-                new Date(2020, 8, 1));
+                date1);
         curve(  [dati_dict['terapie_story']],
                 ['#44a546'],
                 ["valore assoluto"],
                 "t.i. occupate",
                 'grafico_terapie',
                 false,
-                new Date(2020, 8, 1));
+                date1);
         histo(  dati_dict['deceduti_story'],
                 ['#9fcef9', '#1c8af2'],
                 ["valore assoluto", "media mobile"],
                 "deceduti giornalieri",
                 'grafico_deceduti',
                 true,
-                new Date(2020, 8, 1));
-        curve(  [dati_dict['terzadose_story'].slice(123), dati_dict['secondadose_story'].slice(123)],
+                date1);
+        curve(  [dati_dict['terzadose_story'].slice(diffDays_index), dati_dict['quartadose_story'].slice(diffDays_index)],
                 ['#e91e62', '#9023a8'],
-                ["terze dosi", "seconde dosi"],
+                ["terze dosi", "quarte dosi"],
                 "dosi somministrate",
                 'grafico_vaccini',
                 false,
-                new Date(2021, 0, 2));
+                date2);
 
     } catch(error) {
         console.error(error);
