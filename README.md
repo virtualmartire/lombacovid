@@ -1,4 +1,4 @@
-Trovate in questa repo tutto il codice sottostante il progetto lombacovid aggiornato al giorno 28 agosto 2022.
+Trovate in questa repo tutto il codice sottostante il progetto lombacovid aggiornato al giorno 29 agosto 2022.
 
 # macinino
 

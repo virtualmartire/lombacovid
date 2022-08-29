@@ -5,15 +5,15 @@ Date.prototype.addDay = function(days) {
     date.setDate(date.getDate() + days);
     return date;
 }
-  
+
 function getDatesArray(startDate, stopDate) {
     var datesArray = new Array();
     var currentDate = startDate;
     while (currentDate <= stopDate) {
-          
+
         // Adding the date to array
         datesArray.push(new Date(currentDate)); 
-          
+
         // Increment the date by 1 day
         currentDate = currentDate.addDay(1); 
 
@@ -43,7 +43,7 @@ function curve(values, colors, titles, y_label, element_id, with_mean = false, s
 
     var datatable = [];
     if (with_mean == true || values.length == 2) {
-        
+
         var y_2 = [];
         if (with_mean == true) {
             y_1.forEach((element, i) => {

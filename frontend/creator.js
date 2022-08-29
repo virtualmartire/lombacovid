@@ -70,7 +70,7 @@ async function drawCharts() {
         const date1 = new Date(2020, 8, 1);            // months are 0-indexed
         const date2 = new Date(2021, 8, 1);
         const diffTime = Math.abs(date2 - date1);
-        const diffDays_index = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1;
+        const diffDays_index = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
         curve(  values = [dati_dict['perc_story']],
                 colors = ['#fcd2cf', '#f33a30'],
