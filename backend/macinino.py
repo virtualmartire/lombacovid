@@ -6,8 +6,6 @@ import datetime
 import json
 import ftplib
 
-print()
-
 #
 ##
 ### PREPARO GLI INPUT
@@ -16,17 +14,25 @@ print()
 
 oggi_dash = datetime.date.today().strftime('%Y-%m-%d')
 oggi_slash = datetime.date.today().strftime('%d/%m/%Y')
+oggi = datetime.date.today().strftime("%Y%m%d")
 yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
 
-# Carico l'ultimo dataset disponibile
-present = pd.read_csv('https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-latest.csv')
+# # Da attivare per recuperare i dati del giorno prima, nel caso l'algoritmo si fosse incastrato 
+# oggi_dash = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+# oggi_slash = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%d/%m/%Y')
+# oggi = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
+# yesterday = (datetime.date.today() - datetime.timedelta(days=2)).strftime("%Y%m%d")
+
+# Verifico che il dataset di oggi esista
+oggi_url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-'+oggi+'.csv'
+try:
+	present = pd.read_csv(oggi_url)
+except:
+	print("Dataset di oggi non ancora disponibile. Arrivederci!")
+	exit()
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
 
-# Verifico che l'ultimo dataset disponibile sia quello di oggi
-ultimo_aggiornamento = lombardia_present['data'].values[0][:10]
-if oggi_dash != ultimo_aggiornamento:
-	exit("File smarmellati. Ciao!")
-# e che il sito non sia già stato aggiornato
+# Verifico che il sito non sia già stato aggiornato
 story_csv = pd.read_csv('https://www.lombacovid.it/story.csv')		# <---
 if oggi_slash == story_csv['data'].values[-1]:
 	exit("Sito già aggiornato!")
