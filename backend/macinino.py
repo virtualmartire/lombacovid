@@ -12,34 +12,37 @@ import ftplib
 ##
 #
 
-oggi_dash = datetime.date.today().strftime('%Y-%m-%d')
-oggi_slash = datetime.date.today().strftime('%d/%m/%Y')
-oggi = datetime.date.today().strftime("%Y%m%d")
-yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
+# Recupero la data dell'ultimo aggiornamento di lombacovid e valuto se procedere
 
-# # Da attivare per recuperare i dati del giorno prima, nel caso l'algoritmo si fosse incastrato 
-# oggi_dash = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-# oggi_slash = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%d/%m/%Y')
-# oggi = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
-# yesterday = (datetime.date.today() - datetime.timedelta(days=2)).strftime("%Y%m%d")
+story_csv = pd.read_csv('https://www.lombacovid.it/story.csv')	# <---
+data_ultimo_aggiornamento = story_csv['data'].values[-1]
+oggi_slash = datetime.date.today().strftime('%d/%m/%Y')
+if oggi_slash == data_ultimo_aggiornamento:
+	exit("Sito già aggiornato!")
+
+data_ultimo_aggiornamento = data_ultimo_aggiornamento.split("/")
+data_ultimo_aggiornamento.reverse()
+data_ultimo_aggiornamento = list(map(int, data_ultimo_aggiornamento))
+
+yesterday_dataobj = datetime.date(*data_ultimo_aggiornamento)
+oggi_dataobj = (yesterday_dataobj + datetime.timedelta(days=1))
+yesterday = yesterday_dataobj.strftime("%Y%m%d")
+oggi = oggi_dataobj.strftime("%Y%m%d")
+oggi_slash = oggi_dataobj.strftime('%d/%m/%Y')				# oggi e yesterday secondo l'algoritmo
 
 # Verifico che il dataset di oggi esista
+
 oggi_url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-'+oggi+'.csv'
 try:
 	present = pd.read_csv(oggi_url)
 except:
-	print("Dataset di oggi non ancora disponibile. Arrivederci!")
-	exit()
+	exit("Dataset di oggi non ancora disponibile. Arrivederci!")
 lombardia_present = present[ present['denominazione_regione'] == 'Lombardia' ]
-
-# Verifico che il sito non sia già stato aggiornato
-story_csv = pd.read_csv('https://www.lombacovid.it/story.csv')		# <---
-if oggi_slash == story_csv['data'].values[-1]:
-	exit("Sito già aggiornato!")
 
 print("Elaboro...")
 
 # Carico i restanti dataset: past e vaccini
+
 yesterday_url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni-'+yesterday+'.csv'
 past = pd.read_csv(yesterday_url)
 lombardia_past = past[ past['denominazione_regione'] == 'Lombardia' ]
