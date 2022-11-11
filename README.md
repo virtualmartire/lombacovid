@@ -1,8 +1,8 @@
-Trovate in questa repo tutto il codice sottostante il progetto lombacovid aggiornato al giorno 21 ottobre 2022.
+Trovate in questa repo tutto il codice sottostante il progetto lombacovid aggiornato al giorno 10 novembre 2022.
 
 # macinino
 
-"macinino.py" è il motore backend del sito. Dopo aver recuperato i dati del progetto (dal file story.csv), aver controllato che il sito non sia già stato aggiornato e aver verificato che siano stati pubblicati dei dati nuovi, è l'algoritmo che aggiorna tutti i valori e li pubblica di nuovo sul server. Il Dockerfile presente in questa repo permette di riprodurlo in maniera completamente affidabile e portatile.
+"macinino.py" è il motore backend del sito. Dopo aver recuperato online i dati del progetto (dal file story.csv), aver controllato che il sito non sia già stato aggiornato e aver verificato che siano stati pubblicati dei dati nuovi, è l'algoritmo che aggiorna tutti i valori e li pubblica di nuovo sul server. Il Dockerfile presente in questa repo permette di riprodurlo in maniera completamente affidabile e portatile.
 
 # frontend
 
