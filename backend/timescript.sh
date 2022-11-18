@@ -1,3 +1,3 @@
 #!/bin/bash
 
-while true; do python ./backend/macinino.py; sleep 3600; done
+while true; do python ./backend/macinino.py; sleep 86400; done
