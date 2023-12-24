@@ -1,7 +1,4 @@
 .DS_Store
-ML/.ipynb_checkpoints
 
 old/
 credentials.json
-ML/date_datasets
-ML/region_datasets
